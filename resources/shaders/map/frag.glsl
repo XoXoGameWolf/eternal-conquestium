@@ -36,6 +36,6 @@ void main() {
             texture(provinceTex, coord_int + vec2(1.0f / 28160.0f, -1.0f / 10240.0f)) != id ||
             texture(provinceTex, coord_int + vec2(-1.0f / 28160.0f, 1.0f / 10240.0f)) != id ||
             texture(provinceTex, coord_int + vec2(1.0f / 28160.0f, 1.0f / 10240.0f)) != id) {
-        color *= vec4(1 - pow(1 - camPos.z, 12), 1 - pow(1 - camPos.z, 12), 1 - pow(1 - camPos.z, 12), 1.0f);
+        color *= vec4(1 - pow(1 - camPos.z, 8) * 0.5f, 1 - pow(1 - camPos.z, 8) * 0.5f, 1 - pow(1 - camPos.z, 8) * 0.5f, 1.0f);
     }
 }
