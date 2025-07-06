@@ -263,7 +263,7 @@ int main() {
         window_update();
     }
 
-    renderer_destroy();
+    //renderer_destroy();
     window_destroy();
     return 0;
 }
