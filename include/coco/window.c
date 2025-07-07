@@ -20,6 +20,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+void error_callback(int id, const char* description) {
+    printf("GLFW had an error: \n%s\n", description);
+}
+
 void window_init(char* title, int width, int height) {
     window_width = width;
     window_height = height;
@@ -27,6 +31,8 @@ void window_init(char* title, int width, int height) {
     window_lastFullscreen = false;
     window_fullscreen = false;
     window_open = true;
+
+    glfwSetErrorCallback(&error_callback);
 
     if(!glfwInit()) {
         printf("GLFW was not initialized.\n");
