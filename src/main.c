@@ -146,7 +146,7 @@ int main() {
 
                     tx = b + 256 * (g % 16);
                     ty = g / 16 + 16 * r;
-
+                    
                     if(mode == 1) {
                         address = (tx + ty * terrainTex->width) * terrainTex->channels;
                         
@@ -155,9 +155,16 @@ int main() {
                             terrainTex->data[address + 1] = 0;
                             terrainTex->data[address + 2] = 0;
                             renderer_updateTexture(terrainTex);
+                            
+                            if(selected == 2) {
+                                borderTex->data[address] = 0;
+                                borderTex->data[address + 1] = 0;
+                                borderTex->data[address + 2] = 0;
+                                renderer_updateTexture(borderTex);
+                            }
                         }
 
-                    } else if(mode == 2) {
+                    } else if(mode == 2 && terrainTex->data[(tx + ty * terrainTex->width) * terrainTex->channels] != 2) {
                         address = (tx + ty * borderTex->width) * borderTex->channels;
                         
                         if(borderTex->data[address] != selected) {

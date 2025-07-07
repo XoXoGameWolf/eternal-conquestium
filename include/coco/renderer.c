@@ -201,12 +201,12 @@ Mesh* renderer_createMeshFast(float* vertices, int vertices_size, float* coords,
 }
 
 Shader* renderer_createShader(char* vertexPath, char* fragmentPath) {
-    char* vertexShaderSourceDynamic = malloc(4096);
-    for(int i = 0; i < 4096; i++) {vertexShaderSourceDynamic[i] = 0;}
+    char* vertexShaderSourceDynamic = malloc(65536);
+    for(int i = 0; i < 65536; i++) {vertexShaderSourceDynamic[i] = 0;}
     readFile(vertexShaderSourceDynamic, vertexPath);
 
-    char* fragmentShaderSourceDynamic = malloc(4096);
-    for(int i = 0; i < 4096; i++) {fragmentShaderSourceDynamic[i] = 0;}
+    char* fragmentShaderSourceDynamic = malloc(65536);
+    for(int i = 0; i < 65536; i++) {fragmentShaderSourceDynamic[i] = 0;}
     readFile(fragmentShaderSourceDynamic, fragmentPath);
 
     const char* vertexShaderSource = vertexShaderSourceDynamic;
