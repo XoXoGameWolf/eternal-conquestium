@@ -1,15 +1,21 @@
+all: linux windows
+
 linux: build/eternal-conquestium-linux.zip
 windows: build/eternal-conquestium-windows.zip
 
 build/eternal-conquestium-linux.zip: build/app
 	rm build/eternal-conquestium-linux.zip
-	cp -rf build/app resources zip
-	cd zip; zip -r ../build/eternal-conquestium-linux.zip *; rm -rf *
+	mkdir game
+	cp -rf build/app resources game
+	zip -r build/eternal-conquestium-linux.zip game
+	rm -rf game
 
 build/eternal-conquestium-windows.zip: build/app.exe
 	rm build/eternal-conquestium-windows.zip
-	cp -rf build/app.exe resources windows/* zip
-	cd zip; zip -r ../build/eternal-conquestium-windows.zip *; rm -rf *
+	mkdir game
+	cp -rf build/app.exe resources windows/* game
+	zip -r build/eternal-conquestium-windows.zip game
+	rm -rf game
 
 build/app: src/* include/coco/*
 	gcc -I include -o build/app src/main.c include/glad.c -lglfw -lGL -lm
