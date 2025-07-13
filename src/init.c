@@ -12,6 +12,11 @@ void gameInit() {
     scenario = malloc(sizeof(Scenario));
 
     mainMenuTex = renderer_createTexture("resources/ui/main_menu.bmp");
+    editorTex = renderer_createTexture("resources/ui/editor.bmp");
+    nationSelectTex = renderer_createTexture("resources/ui/nation_select.bmp");
+    gameplayTex = renderer_createTexture("resources/ui/gameplay.bmp");
+    diplomacyTex = renderer_createTexture("resources/ui/diplomacy.bmp");
+
     map->provinceTex = renderer_createTexture("resources/map/provinces.bmp");
     map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
     scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
@@ -24,12 +29,24 @@ void gameInit() {
     mapShader = renderer_createShader("resources/shaders/map/vert.glsl", "resources/shaders/map/frag.glsl");
     uiShader = renderer_createShader("resources/shaders/ui/vert.glsl", "resources/shaders/ui/frag.glsl");
 
+    wars = malloc(4096 * sizeof(War));
+    for(int i = 0; i < 4096; i++) {
+        wars[i].nation1 = 0;
+        wars[i].nation2 = 0;
+    }
+
     camPosX = 0.0f;
     camPosY = 0.0f;
     camPosZ = 1.0f;
     camVelX = 0.0f;
     camVelY = 0.0f;
     camVelZ = 0.0f;
+
+    mode = 0;
+    aspect = 0;
+    selected = 0;
+    selectedNation = 0;
+    playerNation = 0;
 
     lastLeftMouseButton = false;
 

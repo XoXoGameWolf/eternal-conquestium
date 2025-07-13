@@ -10,19 +10,32 @@ typedef struct {
     Texture* colorTex;
 } Scenario;
 
+typedef struct {
+    char nation1;
+    char nation2;
+} War;
+
 Map* map;
 Scenario* scenario;
 
 Texture* mainMenuTex;
+Texture* editorTex;
+Texture* nationSelectTex;
+Texture* gameplayTex;
+Texture* diplomacyTex;
 
 Shader* mapShader;
 Shader* uiShader;
 
 Mesh* quad;
 
+War* wars;
+
 int mode;
 float aspect;
-int selected;
+unsigned char selected;
+unsigned char selectedNation;
+unsigned char playerNation;
 
 float camPosX;
 float camPosY;

@@ -5,6 +5,8 @@ uniform sampler2D terrainTex;
 uniform sampler2D borderTex;
 uniform sampler2D colorTex;
 uniform vec3 camPos;
+uniform float selectedNation;
+uniform float time;
 
 in vec2 coord_int;
 out vec4 out_color;
@@ -76,6 +78,10 @@ void main() {
 
     if(nationID != NATION_NONE && terrainID != TERRAIN_OCEAN) {
         out_color = texture(colorTex, vec2(nationID, 0));
+
+        if(nationID == selectedNation) {
+            out_color.rgb *= (sin(time * 3) + 1) / 4 + 1.2;
+        }
 
     } else if(terrainID == TERRAIN_NONE) {
         out_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
