@@ -50,8 +50,5 @@ void gameInit() {
 
     lastLeftMouseButton = false;
 
-    lastF8 = false;
     lastN = false;
-    lastR = false;
-    lastEscape = false;
 }

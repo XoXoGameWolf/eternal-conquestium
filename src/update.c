@@ -96,6 +96,13 @@ void gameUpdate() {
                 selectedNation = 0;
                 playerNation = 0;
 
+                renderer_deleteTexture(map->terrainTex);
+                renderer_deleteTexture(scenario->borderTex);
+                renderer_deleteTexture(scenario->colorTex);
+                map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
+                scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
+                scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp");
+
             } else if(selectedNation != 0 && tx > 275 && tx < 311 && ty > 241 && ty < 275) {
                 selectedNation = 0;
             
@@ -202,6 +209,10 @@ void gameUpdate() {
             if(tx > 0 && tx < 156 && ty > 0 && ty < 53) {
                 mode = 0;
                 selected = 0;
+
+                renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
+                renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
+                renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
 
             } else {
                 x = x / window_width * 2 - 1;
@@ -310,16 +321,6 @@ void gameUpdate() {
         }
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_R) && !lastR) { // reload data
-        renderer_deleteTexture(map->terrainTex);
-        renderer_deleteTexture(scenario->borderTex);
-        renderer_deleteTexture(scenario->colorTex);
-        map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
-        scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
-        scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp");
-    }
-    lastR = glfwGetKey(window_window, GLFW_KEY_R);
-
     if(glfwGetKey(window_window, GLFW_KEY_N) && !lastN) { // select new nation
         if(mode == 2) {
             selected = 1;
@@ -337,11 +338,4 @@ void gameUpdate() {
         }
     }
     lastN = glfwGetKey(window_window, GLFW_KEY_N);
-
-    if(glfwGetKey(window_window, GLFW_KEY_F8) && !lastF8) { // save
-        renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
-        renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
-        renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
-    }
-    lastF8 = glfwGetKey(window_window, GLFW_KEY_F8);
 }

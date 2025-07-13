@@ -46,7 +46,4 @@ float camVelZ;
 
 bool lastLeftMouseButton;
 
-bool lastF8;
 bool lastN;
-bool lastR;
-bool lastEscape;
