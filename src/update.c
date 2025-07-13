@@ -310,8 +310,8 @@ void gameUpdate() {
                 int otherNation = scenario->borderTex->data[address];
 
                 for(int i = 0; i < 4096; i++) {
-                    if((wars[i].nation1 == playerNation && wars[i].nation2 == otherNation) ||
-                            (wars[i].nation2 == playerNation && wars[i].nation1 == otherNation)) {
+                    if((wars[i].nation1 == (char)playerNation && wars[i].nation2 == (char)otherNation) ||
+                            (wars[i].nation2 == (char)playerNation && wars[i].nation1 == (char)otherNation)) {
                         scenario->borderTex->data[address] = playerNation;
                         renderer_updateTexture(scenario->borderTex);
                         break;
