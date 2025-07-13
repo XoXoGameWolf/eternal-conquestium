@@ -109,6 +109,7 @@ void gameUpdate() {
             } else if(selectedNation != 0 && tx > 25 && tx < 278 && ty > 303 && ty < 346) {
                 for(int i = 0; i < 4096; i++) {
                     if(wars[i].nation1 == 0) {
+                        printf("%d\n", i);
                         wars[i].nation1 = playerNation;
                         wars[i].nation2 = selectedNation;
                         break;
@@ -117,8 +118,9 @@ void gameUpdate() {
             
             } else if(selectedNation != 0 && tx > 25 && tx < 278 && ty > 351 && ty < 394) {
                 for(int i = 0; i < 4096; i++) {
-                    if((wars[i].nation1 == playerNation && wars[i].nation2 == selectedNation) ||
-                            (wars[i].nation2 == playerNation && wars[i].nation1 == selectedNation)) {
+                    if((wars[i].nation1 == (char)playerNation && wars[i].nation2 == (char)selectedNation) ||
+                            (wars[i].nation2 == (char)playerNation && wars[i].nation1 == (char)selectedNation)) {
+                        printf("%d\n", i);
                         wars[i].nation1 = 0;
                         wars[i].nation2 = 0;
                         break;
