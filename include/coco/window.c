@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -21,6 +22,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void error_callback(int id, const char* description) {
+    // ignore "Invalid window size 0x0" error
+    if(strlen(description) >= 23 && description[20] == '0' && description[21] == 'x' && description[22] == '0') {
+        return;
+    }
     printf("GLFW had an error: \n%s\n", description);
 }
 
