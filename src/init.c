@@ -17,6 +17,8 @@ void gameInit() {
     gameplayTex = renderer_createTexture("resources/ui/gameplay.bmp");
     diplomacyTex = renderer_createTexture("resources/ui/diplomacy.bmp");
 
+    fontTex = renderer_createTexture("resources/font/font.bmp");
+
     map->provinceTex = renderer_createTexture("resources/map/provinces.bmp");
     map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
     scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
@@ -28,6 +30,7 @@ void gameInit() {
     );
     mapShader = renderer_createShader("resources/shaders/map/vert.glsl", "resources/shaders/map/frag.glsl");
     uiShader = renderer_createShader("resources/shaders/ui/vert.glsl", "resources/shaders/ui/frag.glsl");
+    fontShader = renderer_createShader("resources/shaders/font/vert.glsl", "resources/shaders/font/frag.glsl");
 
     wars = malloc(4096 * sizeof(War));
     for(int i = 0; i < 4096; i++) {

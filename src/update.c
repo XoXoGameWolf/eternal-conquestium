@@ -96,6 +96,11 @@ void gameUpdate() {
                 selectedNation = 0;
                 playerNation = 0;
 
+                for(int i = 0; i < 4096; i++) {
+                    wars[i].nation1 = 0;
+                    wars[i].nation2 = 0;
+                }
+
                 renderer_deleteTexture(map->terrainTex);
                 renderer_deleteTexture(scenario->borderTex);
                 renderer_deleteTexture(scenario->colorTex);

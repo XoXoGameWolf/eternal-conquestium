@@ -24,8 +24,11 @@ Texture* nationSelectTex;
 Texture* gameplayTex;
 Texture* diplomacyTex;
 
+Texture* fontTex;
+
 Shader* mapShader;
 Shader* uiShader;
+Shader* fontShader;
 
 Mesh* quad;
 

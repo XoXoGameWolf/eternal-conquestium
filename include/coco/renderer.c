@@ -416,6 +416,20 @@ void renderer_setUniformMat4(Shader* shader, char* name, float* data) {
     glUseProgram(0);
 }
 
+void renderer_setUniformFloatArray(Shader* shader, char* name, float* data, int length) {
+    glUseProgram(shader->program);
+    int location = glGetUniformLocation(shader->program, name);
+    glUniform1fv(location, length, data);
+    glUseProgram(0);
+}
+
+void renderer_setUniformIntArray(Shader* shader, char* name, int* data, int length) {
+    glUseProgram(shader->program);
+    int location = glGetUniformLocation(shader->program, name);
+    glUniform1iv(location, length, data);
+    glUseProgram(0);
+}
+
 void renderer_setUniformTexture(Shader* shader, char* name, Texture* texture, int num) {
     glActiveTexture(GL_TEXTURE0 + num);
     glBindTexture(GL_TEXTURE_2D, texture->texture);

@@ -1,5 +1,19 @@
 #pragma once
 
+void renderText(float x, float y, float scale, char* text, float r, float g, float b) {
+    int length = strlen(text);
+    renderer_setUniformTexture(fontShader, "tex", fontTex, 5);
+    renderer_setUniformFloat(fontShader, "aspect", aspect);
+    int data[length];
+    for(int i = 0; i < length; i++) data[i] = text[i];
+    renderer_setUniformIntArray(fontShader, "data", data, 32);
+    renderer_setUniformInt(fontShader, "length", length);
+    renderer_setUniformVec2(fontShader, "pos", x, y);
+    renderer_setUniformFloat(fontShader, "scale", scale);
+    renderer_setUniformVec3(fontShader, "color", r, g, b);
+    renderer_renderMesh(quad, fontShader);
+}
+
 void gameRender() {
     renderer_update();
 
@@ -51,6 +65,11 @@ void gameRender() {
         renderer_setUniformTexture(uiShader, "tex", mainMenuTex, 4);
         renderer_renderMesh(quad, uiShader);
 
+        renderText(805.0 / 1600.0 * 2 - 1, 2 - 333.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Play Game", 0, 0, 0);
+        renderText(805.0 / 1600.0 * 2 - 1, 2 - 442.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Terrain Editor", 0, 0, 0);
+        renderText(805.0 / 1600.0 * 2 - 1, 2 - 543.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Border Editor", 0, 0, 0);
+        renderText(805.0 / 1600.0 * 2 - 1, 2 - 639.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Exit Game", 0, 0, 0);
+
     } else if(mode == 1 || mode == 2) {
         if(x > 0.0f && x < 156.0f / 1600.0f && y > 0.0f && y < 53.0f / 900.0f) {
             renderer_setUniformVec2(uiShader, "highlight1", 0.0f, 0.0f);
@@ -63,6 +82,8 @@ void gameRender() {
 
         renderer_setUniformTexture(uiShader, "tex", editorTex, 4);
         renderer_renderMesh(quad, uiShader);
+
+        renderText(52.0 / 1600.0 * 2 - 1, 2 - 26.0 / 900.0 * 2 - 1, 89.0 / 1600.0, "Back", 0, 0, 0);
 
     } else if(mode == 3) {
         if(x > 0.0f && x < 156.0f / 1600.0f && y > 0.0f && y < 53.0f / 900.0f) {
@@ -80,6 +101,9 @@ void gameRender() {
         renderer_setUniformTexture(uiShader, "tex", nationSelectTex, 4);
         renderer_renderMesh(quad, uiShader);
 
+        renderText(52.0 / 1600.0 * 2 - 1, 2 - 26.0 / 900.0 * 2 - 1, 89.0 / 1600.0, "Back", 0, 0, 0);
+        renderText(817 / 1600.0 * 2 - 1, 2 - 34.0 / 900.0 * 2 - 1, 443.0 / 1600.0 * 0.8, "Select Nation", 0, 0, 0);
+
     } else if(mode == 4 && selectedNation == 0) {
         if(x > 0.0f && x < 227.0f / 1600.0f && y > 0.0f && y < 79.0f / 900.0f) {
             renderer_setUniformVec2(uiShader, "highlight1", 0.0f, 0.0f);
@@ -91,6 +115,8 @@ void gameRender() {
         }
         renderer_setUniformTexture(uiShader, "tex", gameplayTex, 4);
         renderer_renderMesh(quad, uiShader);
+
+        renderText(110.0 / 1600.0 * 2 - 1, 2 - 43.0 / 900.0 * 2 - 1, 227 / 1600.0 * 0.6, "Menu", 0, 0, 0);
         
     } else if(mode == 4) {
         if(x > 0.0f && x < 227.0f / 1600.0f && y > 0.0f && y < 79.0f / 900.0f) {
@@ -139,6 +165,11 @@ void gameRender() {
         }
         renderer_setUniformTexture(uiShader, "tex", diplomacyTex, 4);
         renderer_renderMesh(quad, uiShader);
+
+        renderText(110.0 / 1600.0 * 2 - 1, 2 - 43.0 / 900.0 * 2 - 1, 227 / 1600.0 * 0.6, "Menu", 0, 0, 0);
+        renderText(151.0 / 1600.0 * 2 - 1, 2 - 275.0 / 900.0 * 2 - 1, 248 / 1600.0 * 0.8, "Diplomacy", 0, 0, 0);
+        renderText(151.0 / 1600.0 * 2 - 1, 2 - 326.0 / 900.0 * 2 - 1, 253 / 1600.0 * 0.8, "Declare War", 0, 0, 0);
+        renderText(151.0 / 1600.0 * 2 - 1, 2 - 376.0 / 900.0 * 2 - 1, 253 / 1600.0 * 0.8, "Sue for Peace", 0, 0, 0);
     }
 
     window_update();
