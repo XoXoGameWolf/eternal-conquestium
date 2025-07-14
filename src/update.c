@@ -96,9 +96,12 @@ void gameUpdate() {
                 selectedNation = 0;
                 playerNation = 0;
 
-                for(int i = 0; i < 4096; i++) {
-                    wars[i].nation1 = 0;
-                    wars[i].nation2 = 0;
+                for(int i = 0; i < 256; i++) {
+                    nations[i].provinceCount = 0;
+
+                    for(int j = 0; j < 256; j++) {
+                        nations[i].wars[j] = false;
+                    }
                 }
 
                 renderer_deleteTexture(map->terrainTex);
@@ -108,26 +111,26 @@ void gameUpdate() {
                 scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
                 scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp");
 
+                for(int x = 0; x < scenario->borderTex->width; x++) {
+                    for(int y = 0; y < scenario->borderTex->height; y++) {
+                        int address = (x + scenario->borderTex->width * y) * scenario->borderTex->channels;
+                        nations[(unsigned char)scenario->borderTex->data[address]].provinceCount++;
+                    }
+                }
+
             } else if(selectedNation != 0 && tx > 275 && tx < 311 && ty > 241 && ty < 275) {
                 selectedNation = 0;
             
             } else if(selectedNation != 0 && tx > 25 && tx < 278 && ty > 303 && ty < 346) {
-                for(int i = 0; i < 4096; i++) {
-                    if(wars[i].nation1 == 0) {
-                        wars[i].nation1 = playerNation;
-                        wars[i].nation2 = selectedNation;
-                        break;
-                    }
-                }
-            
-            } else if(selectedNation != 0 && tx > 25 && tx < 278 && ty > 351 && ty < 394) {
-                for(int i = 0; i < 4096; i++) {
-                    if((wars[i].nation1 == (char)playerNation && wars[i].nation2 == (char)selectedNation) ||
-                            (wars[i].nation2 == (char)playerNation && wars[i].nation1 == (char)selectedNation)) {
-                        wars[i].nation1 = 0;
-                        wars[i].nation2 = 0;
-                        break;
-                    }
+                bool war = nations[playerNation].wars[selectedNation] || nations[selectedNation].wars[playerNation];
+
+                if(war) {
+                    nations[playerNation].wars[selectedNation] = false;
+                    nations[selectedNation].wars[playerNation] = false;
+
+                } else {
+                    nations[playerNation].wars[selectedNation] = true;
+                    nations[selectedNation].wars[playerNation] = true;
                 }
 
             } else if(selectedNation != 0 && tx > 0 && tx < 311 && ty > 241 && ty < 705) {
@@ -212,12 +215,29 @@ void gameUpdate() {
             int ty = (int)floor(y / window_height * editorTex->height);
 
             if(tx > 0 && tx < 156 && ty > 0 && ty < 53) {
-                mode = 0;
-                selected = 0;
-
                 renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
                 renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
                 renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
+
+                mode = 0;
+                selected = 0;
+                selectedNation = 0;
+                playerNation = 0;
+
+                for(int i = 0; i < 256; i++) {
+                    nations[i].provinceCount = 0;
+
+                    for(int j = 0; j < 256; j++) {
+                        nations[i].wars[j] = false;
+                    }
+                }
+
+                for(int x = 0; x < scenario->borderTex->width; x++) {
+                    for(int y = 0; y < scenario->borderTex->height; y++) {
+                        int address = (x + scenario->borderTex->width * y) * scenario->borderTex->channels;
+                        nations[(unsigned char)scenario->borderTex->data[address]].provinceCount++;
+                    }
+                }
 
             } else {
                 x = x / window_width * 2 - 1;
@@ -261,7 +281,7 @@ void gameUpdate() {
                     } else if(mode == 2 && map->terrainTex->data[(tx + ty * map->terrainTex->width) * map->terrainTex->channels] != 2) {
                         address = (tx + ty * scenario->borderTex->width) * scenario->borderTex->channels;
                             
-                        if(scenario->borderTex->data[address] != selected) {
+                        if(scenario->borderTex->data[address] != (char)selected) {
                             scenario->borderTex->data[address] = selected;
                             scenario->borderTex->data[address + 1] = 0;
                             scenario->borderTex->data[address + 2] = 0;
@@ -312,14 +332,32 @@ void gameUpdate() {
 
             } else if(mode == 4) { // war
                 address = (tx + ty * scenario->borderTex->width) * scenario->borderTex->channels;
-                int otherNation = scenario->borderTex->data[address];
+                int otherNation = (unsigned char)scenario->borderTex->data[address];
 
-                for(int i = 0; i < 4096; i++) {
-                    if((wars[i].nation1 == (char)playerNation && wars[i].nation2 == (char)otherNation) ||
-                            (wars[i].nation2 == (char)playerNation && wars[i].nation1 == (char)otherNation)) {
-                        scenario->borderTex->data[address] = playerNation;
-                        renderer_updateTexture(scenario->borderTex);
-                        break;
+                if(nations[playerNation].wars[otherNation] || nations[otherNation].wars[playerNation]) {
+                    scenario->borderTex->data[address] = playerNation;
+                    renderer_updateTexture(scenario->borderTex);
+
+                    nations[playerNation].provinceCount++;
+                    nations[otherNation].provinceCount--;
+
+                    if(nations[otherNation].provinceCount == 0) {
+                        for(int i = 0; i < 256; i++) {
+                            nations[otherNation].wars[i] = false;
+                            nations[i].wars[otherNation] = false;
+                        }
+
+                        if(selectedNation == otherNation) {
+                            selectedNation = 0;
+                        }
+
+                        address = otherNation * scenario->colorTex->channels;
+
+                        scenario->colorTex->data[address] = 0;
+                        scenario->colorTex->data[address + 1] = 0;
+                        scenario->colorTex->data[address + 2] = 0;
+
+                        renderer_updateTexture(scenario->colorTex);
                     }
                 }
             }

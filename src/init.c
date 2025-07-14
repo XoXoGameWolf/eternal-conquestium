@@ -32,10 +32,19 @@ void gameInit() {
     uiShader = renderer_createShader("resources/shaders/ui/vert.glsl", "resources/shaders/ui/frag.glsl");
     fontShader = renderer_createShader("resources/shaders/font/vert.glsl", "resources/shaders/font/frag.glsl");
 
-    wars = malloc(4096 * sizeof(War));
-    for(int i = 0; i < 4096; i++) {
-        wars[i].nation1 = 0;
-        wars[i].nation2 = 0;
+    for(int i = 0; i < 256; i++) {
+        nations[i].provinceCount = 0;
+
+        for(int j = 0; j < 256; j++) {
+            nations[i].wars[j] = false;
+        }
+    }
+
+    for(int x = 0; x < scenario->borderTex->width; x++) {
+        for(int y = 0; y < scenario->borderTex->height; y++) {
+            int address = (x + scenario->borderTex->width * y) * scenario->borderTex->channels;
+            nations[(unsigned char)scenario->borderTex->data[address]].provinceCount++;
+        }
     }
 
     camPosX = 0.0f;

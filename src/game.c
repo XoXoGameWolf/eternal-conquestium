@@ -11,9 +11,9 @@ typedef struct {
 } Scenario;
 
 typedef struct {
-    char nation1;
-    char nation2;
-} War;
+    int provinceCount;
+    bool wars[256];
+} Nation;
 
 Map* map;
 Scenario* scenario;
@@ -32,7 +32,7 @@ Shader* fontShader;
 
 Mesh* quad;
 
-War* wars;
+Nation nations[256];
 
 int mode;
 float aspect;
