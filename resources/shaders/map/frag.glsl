@@ -2,6 +2,7 @@
 
 uniform sampler2D provinceTex;
 uniform sampler2D terrainTex;
+uniform sampler2D centerTex;
 uniform sampler2D borderTex;
 uniform sampler2D colorTex;
 uniform vec3 camPos;

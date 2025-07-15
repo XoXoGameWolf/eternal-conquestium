@@ -21,6 +21,7 @@ void gameRender() {
     renderer_setUniformTexture(mapShader, "terrainTex", map->terrainTex, 1);
     renderer_setUniformTexture(mapShader, "borderTex", scenario->borderTex, 2);
     renderer_setUniformTexture(mapShader, "colorTex", scenario->colorTex, 3);
+    renderer_setUniformTexture(mapShader, "centerTex", map->centerTex, 5);
     renderer_setUniformFloat(mapShader, "aspect", aspect);
     renderer_setUniformVec3(mapShader, "camPos", camPosX, camPosY, camPosZ);
     renderer_setUniformFloat(mapShader, "time", glfwGetTime());
@@ -49,7 +50,7 @@ void gameRender() {
         renderText(805.0 / 1600.0 * 2 - 1, 2 - 543.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Border Editor", 0, 0, 0);
         renderText(805.0 / 1600.0 * 2 - 1, 2 - 639.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Exit Game", 0, 0, 0);
 
-    } else if(mode == 1 || mode == 2) {
+    } else if(mode == 1 || mode == 2 || mode == 5) {
         renderer_setUniformTexture(uiShader, "tex", editorTex, 4);
         renderer_renderMesh(quad, uiShader);
 

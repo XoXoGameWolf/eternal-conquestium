@@ -21,6 +21,7 @@ void gameInit() {
 
     map->provinceTex = renderer_createTexture("resources/map/provinces.bmp");
     map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
+    map->centerTex = renderer_createTexture("resources/map/centers.bmp");
     scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
     scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp");
     quad = renderer_createMeshFast(

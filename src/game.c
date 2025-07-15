@@ -2,6 +2,7 @@
 
 typedef struct {
     Texture* provinceTex;
+    Texture* centerTex;
     Texture* terrainTex;
 } Map;
 

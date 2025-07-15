@@ -68,7 +68,59 @@ void gameUpdate() {
 
         glfwGetCursorPos(window_window, &x, &y);
 
-        if(mode == 0 && !lastLeftMouseButton) { // main menu
+        if(mode == 5 && !lastLeftMouseButton) {
+            int tx = (int)floor(x / window_width * editorTex->width);
+            int ty = (int)floor(y / window_height * editorTex->height);
+
+            if(tx > 0 && tx < 156 && ty > 0 && ty < 53) {
+                renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
+                renderer_saveTexture("resources/map/centers.bmp", map->centerTex);
+                renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
+                renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
+
+                mode = 0;
+                selected = 0;
+                selectedNation = 0;
+                playerNation = 0;
+
+                for(int i = 0; i < 256; i++) {
+                    nations[i].provinceCount = 0;
+
+                    for(int j = 0; j < 256; j++) {
+                        nations[i].wars[j] = false;
+                    }
+                }
+
+                for(int x = 0; x < scenario->borderTex->width; x++) {
+                    for(int y = 0; y < scenario->borderTex->height; y++) {
+                        int address = (x + scenario->borderTex->width * y) * scenario->borderTex->channels;
+                        nations[(unsigned char)scenario->borderTex->data[address]].provinceCount++;
+                    }
+                }
+
+            } else {
+                x = x / (float)window_width * 2 - 1;
+                y = 2 - y / (float)window_height * 2 - 1;
+            
+                x = (x * camPosZ + camPosX) / 2.75f;
+                if(x < -1) x += 2;
+                if(x > 1) x -= 2;
+                y = y / aspect * camPosZ + camPosY;
+
+                tx = (int)floor((x + 0.5) * (float)map->centerTex->width);
+                ty = (int)floor((-y + 0.5) * (float)map->centerTex->height);
+
+                int address = (tx + map->centerTex->width * ty) * map->centerTex->channels;
+
+                map->centerTex->data[address] = 255;
+                map->centerTex->data[address + 1] = 255;
+                map->centerTex->data[address + 2] = 255;
+                renderer_updateTexture(map->centerTex);
+            }
+
+            lastLeftMouseButton = true;
+
+        } else if(mode == 0 && !lastLeftMouseButton) { // main menu
             int tx = (int)floor(x / window_width * 1600);
             int ty = (int)floor(y / window_height * 900);
 
@@ -105,9 +157,11 @@ void gameUpdate() {
                 }
 
                 renderer_deleteTexture(map->terrainTex);
+                renderer_deleteTexture(map->centerTex);
                 renderer_deleteTexture(scenario->borderTex);
                 renderer_deleteTexture(scenario->colorTex);
                 map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
+                map->centerTex = renderer_createTexture("resources/map/centers.bmp");
                 scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
                 scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp");
 
@@ -216,6 +270,7 @@ void gameUpdate() {
 
             if(tx > 0 && tx < 156 && ty > 0 && ty < 53) {
                 renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
+                renderer_saveTexture("resources/map/centers.bmp", map->centerTex);
                 renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
                 renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
 
@@ -360,6 +415,29 @@ void gameUpdate() {
                         renderer_updateTexture(scenario->colorTex);
                     }
                 }
+            } else if(mode == 5) {
+                double x;
+                double y;
+
+                glfwGetCursorPos(window_window, &x, &y);
+
+                x = x / (float)window_width * 2 - 1;
+                y = 2 - y / (float)window_height * 2 - 1;
+        
+                x = (x * camPosZ + camPosX) / 2.75f;
+                if(x < -1) x += 2;
+                if(x > 1) x -= 2;
+                y = y / aspect * camPosZ + camPosY;
+
+                int tx = (int)floor((x + 0.5) * (float)map->centerTex->width);
+                int ty = (int)floor((-y + 0.5) * (float)map->centerTex->height);
+
+                int address = (tx + map->centerTex->width * ty) * map->centerTex->channels;
+
+                map->centerTex->data[address] = 0;
+                map->centerTex->data[address + 1] = 0;
+                map->centerTex->data[address + 2] = 0;
+                renderer_updateTexture(map->centerTex);
             }
         }
     }
