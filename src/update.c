@@ -62,6 +62,86 @@ void gameUpdate() {
         camPosX = 2.75f + (camPosX + 2.75f);
     }
 
+    if(mode == 4 && glfwGetKey(window_window, GLFW_KEY_R) && !lastR) {
+        double x;
+        double y;
+
+        glfwGetCursorPos(window_window, &x, &y);
+
+        x = x / window_width * 2 - 1;
+        y = 2 - y / window_height * 2 - 1;
+
+        x = (x * camPosZ + camPosX) / 2.75f;
+        if(x > 1) x -= 2;
+        if(x < -1) x += 2;
+        y = y / aspect * camPosZ + camPosY;
+
+        x = x + 0.5;
+        y = -y + 0.5;
+
+        int tx = (int)(x * map->provinceTex->width);
+        int ty = (int)(y * map->provinceTex->height);
+
+        int address = (tx + map->provinceTex->width * ty) * map->provinceTex->channels;
+
+        unsigned char r = map->provinceTex->data[address];
+        unsigned char g = map->provinceTex->data[address + 1];
+        unsigned char b = map->provinceTex->data[address + 2];
+
+        tx = b + 256 * (g % 16);
+        ty = g / 16 + 16 * r;
+
+        address = (tx + scenario->borderTex->width * ty) * scenario->borderTex->channels;
+
+        bool valid = false;
+
+        if(scenario->borderTex->data[address] == (char)playerNation) valid = true;
+        if(nations[playerNation].wars[(unsigned char)scenario->borderTex->data[address]]) valid = true;
+        if(nations[(unsigned char)scenario->borderTex->data[address]].wars[playerNation]) valid = true;
+
+        if(valid) {
+            int tx2 = 0;
+            int ty2 = 0;
+
+            for(tx = 0; tx < map->centerTex->width; tx++) {
+                for(ty = 0; ty < map->centerTex->height; ty++) {
+                    address = (tx + map->centerTex->width * ty) * map->centerTex->channels;
+
+                    if(map->centerTex->data[address] == 0) continue;
+
+                    if(map->provinceTex->data[address] != (char)r || 
+                            map->provinceTex->data[address + 1] != (char)g || 
+                            map->provinceTex->data[address + 2] != (char)b) {
+                        continue;
+                    }
+
+                    tx2 = tx;
+                    ty2 = ty;
+                    break;
+                }
+
+                if(tx2 != 0 || ty2 != 0) break;
+            }
+
+            if(tx2 != 0 || ty2 != 0) {
+                for(int i = 0; i < 4096; i++) {
+                    if(armies[i].x == tx2 && armies[i].y == ty2) {
+                        armies[i].size += rand() % 500 + 750;
+                        break;
+                    }
+
+                    if(armies[i].size == 0) {
+                        armies[i].x = tx2;
+                        armies[i].y = ty2;
+                        armies[i].size = rand() % 500 + 750;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    lastR = glfwGetKey(window_window, GLFW_KEY_R);
+
     if(glfwGetMouseButton(window_window, GLFW_MOUSE_BUTTON_LEFT)) { // set province
         double x;
         double y;
@@ -170,6 +250,11 @@ void gameUpdate() {
                         int address = (x + scenario->borderTex->width * y) * scenario->borderTex->channels;
                         nations[(unsigned char)scenario->borderTex->data[address]].provinceCount++;
                     }
+                }
+
+                for(int i = 0; i < 4096; i++) {
+                    armies[i].x = 0;
+                    armies[i].y = 0;
                 }
 
             } else if(selectedNation != 0 && tx > 275 && tx < 311 && ty > 241 && ty < 275) {
@@ -350,96 +435,203 @@ void gameUpdate() {
         lastLeftMouseButton = false;
     }
 
-    if(glfwGetMouseButton(window_window, GLFW_MOUSE_BUTTON_RIGHT)) { // pick province
-        double x;
-        double y;
+    if(glfwGetMouseButton(window_window, GLFW_MOUSE_BUTTON_RIGHT)) { // right click
+        if(!lastRightMouseButton) {
+            double x;
+            double y;
 
-        glfwGetCursorPos(window_window, &x, &y);
+            glfwGetCursorPos(window_window, &x, &y);
 
-        x = x / window_width * 2 - 1;
-        y = 2 - y / window_height * 2 - 1;
+            x = x / window_width * 2 - 1;
+            y = 2 - y / window_height * 2 - 1;
 
-        x = (x * camPosZ + camPosX) / 2.75;
-        if(x > 0.5) x -= 1;
-        if(x < -0.5) x += 1;
-        y = y / aspect * camPosZ + camPosY;
+            x = (x * camPosZ + camPosX) / 2.75;
+            if(x > 0.5) x -= 1;
+            if(x < -0.5) x += 1;
+            y = y / aspect * camPosZ + camPosY;
 
-        if(x > -0.5f && x < 0.5f && y > -0.5f && y < 0.5f) {
-            int tx = (int)floor((x + 0.5) * map->provinceTex->width);
-            int ty = (int)floor((-y + 0.5) * map->provinceTex->height);
+            if(x > -0.5f && x < 0.5f && y > -0.5f && y < 0.5f) {
+                int tx = (int)floor((x + 0.5) * map->provinceTex->width);
+                int ty = (int)floor((-y + 0.5) * map->provinceTex->height);
 
-            int address = (tx + ty * map->provinceTex->width) * map->provinceTex->channels;
+                int address = (tx + ty * map->provinceTex->width) * map->provinceTex->channels;
 
-            unsigned char r = map->provinceTex->data[address];
-            unsigned char g = map->provinceTex->data[address + 1];
-            unsigned char b = map->provinceTex->data[address + 2];
+                unsigned char r = map->provinceTex->data[address];
+                unsigned char g = map->provinceTex->data[address + 1];
+                unsigned char b = map->provinceTex->data[address + 2];
 
-            tx = b + 256 * (g % 16);
-            ty = g / 16 + 16 * r;
+                tx = b + 256 * (g % 16);
+                ty = g / 16 + 16 * r;
 
-            if(mode == 1) { // terrain editor
-                address = (tx + ty * map->terrainTex->width) * map->terrainTex->channels;
-                selected = map->terrainTex->data[address];
+                if(mode == 1) { // terrain editor
+                    address = (tx + ty * map->terrainTex->width) * map->terrainTex->channels;
+                    selected = map->terrainTex->data[address];
 
-            } else if(mode == 2) { // border editor
-                address = (tx + ty * scenario->borderTex->width) * scenario->borderTex->channels;
-                selected = scenario->borderTex->data[address];
+                } else if(mode == 2) { // border editor
+                    address = (tx + ty * scenario->borderTex->width) * scenario->borderTex->channels;
+                    selected = scenario->borderTex->data[address];
 
-            } else if(mode == 4) { // war
-                address = (tx + ty * scenario->borderTex->width) * scenario->borderTex->channels;
-                int otherNation = (unsigned char)scenario->borderTex->data[address];
+                } else if(mode == 4) { // select army
+                    int address2 = (tx + scenario->borderTex->width * ty) * scenario->borderTex->channels;
 
-                if(nations[playerNation].wars[otherNation] || nations[otherNation].wars[playerNation]) {
-                    scenario->borderTex->data[address] = playerNation;
-                    renderer_updateTexture(scenario->borderTex);
+                    bool valid = false;
 
-                    nations[playerNation].provinceCount++;
-                    nations[otherNation].provinceCount--;
+                    if(scenario->borderTex->data[address2] == (char)playerNation) valid = true;
+                    if(nations[playerNation].wars[(unsigned char)scenario->borderTex->data[address2]]) valid = true;
+                    if(nations[(unsigned char)scenario->borderTex->data[address2]].wars[playerNation]) valid = true;
 
-                    if(nations[otherNation].provinceCount == 0) {
-                        for(int i = 0; i < 256; i++) {
-                            nations[otherNation].wars[i] = false;
-                            nations[i].wars[otherNation] = false;
+                    if(valid) {
+                        tx = 0;
+                        ty = 0;
+
+                        for(int x2 = 0; x2 < map->centerTex->width; x2++) {
+                            for(int y2 = 0; y2 < map->centerTex->height; y2++) {
+                                int address = (x2 + map->provinceTex->width * y2) * map->provinceTex->channels;
+                                if(map->provinceTex->data[address] != (char)r 
+                                        || map->provinceTex->data[address + 1] != (char)g
+                                        || map->provinceTex->data[address + 2] != (char)b) {
+                                    continue;
+                                }
+                                if(map->centerTex->data[address] == 0) continue;
+
+                                tx = x2;
+                                ty = y2;
+
+                                break;
+                            }
+
+                            if(tx != 0 || ty != 0) break;
                         }
 
-                        if(selectedNation == otherNation) {
-                            selectedNation = 0;
+                        if(tx != 0 || ty != 0) {
+                            bool found = (selectedArmy == -1);
+
+                            for(int i = 0; i < 4096; i++) {
+                                if(selectedArmy == -1 && scenario->borderTex->data[address2] == playerNation 
+                                        && armies[i].x == tx && armies[i].y == ty) {
+                                    selectedArmy = i;
+                                    break;
+                                
+                                } else if(armies[i].x == tx && armies[i].y == ty && i == selectedArmy) {
+                                    selectedArmy = -1;
+
+                                } else if(scenario->borderTex->data[address2] == playerNation && armies[i].x == tx && armies[i].y == ty) {
+                                    armies[i].size += armies[selectedArmy].size;
+                                    armies[selectedArmy].x = 0;
+                                    armies[selectedArmy].y = 0;
+                                    armies[selectedArmy].size = 0;
+                                    selectedArmy = -1;
+                                    found = true;
+                                    break;
+
+                                } else if(armies[i].x == tx && armies[i].y == ty && armies[i].size <= armies[selectedArmy].size) {
+                                    armies[i].size = -armies[i].size + armies[selectedArmy].size;
+                                    armies[selectedArmy].x = 0;
+                                    armies[selectedArmy].y = 0;
+                                    armies[selectedArmy].size = 0;
+
+                                    selectedArmy = -1;
+                                    found = true;
+                                    nations[scenario->borderTex->data[address2]].provinceCount--;
+                                    nations[playerNation].provinceCount++;
+
+                                    if(nations[scenario->borderTex->data[address2]].provinceCount == 0) {
+                                        for(int i = 0; i < 256; i++) {
+                                            nations[scenario->borderTex->data[address2]].wars[i] = false;
+                                            nations[i].wars[scenario->borderTex->data[address2]] = false;
+                                        }
+
+                                        if(selectedNation == scenario->borderTex->data[address2]) {
+                                            selectedNation = 0;
+                                        }
+
+                                        address = scenario->borderTex->data[address2] * scenario->colorTex->channels;
+
+                                        scenario->colorTex->data[address] = 0;
+                                        scenario->colorTex->data[address + 1] = 0;
+                                        scenario->colorTex->data[address + 2] = 0;
+
+                                        renderer_updateTexture(scenario->colorTex);
+                                    }
+
+                                    scenario->borderTex->data[address2] = playerNation;
+                                    renderer_updateTexture(scenario->borderTex);
+                                    break;
+
+                                } else if(armies[i].x == tx && armies[i].y == ty && armies[i].size > armies[selectedArmy].size) {
+                                    armies[i].size -= armies[selectedArmy].size;
+                                    armies[selectedArmy].x = 0;
+                                    armies[selectedArmy].y = 0;
+                                    armies[selectedArmy].size = 0;
+                                    selectedArmy = -1;
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if(!found) {
+                                armies[selectedArmy].x = tx;
+                                armies[selectedArmy].y = ty;
+                                selectedArmy = -1;
+                                nations[scenario->borderTex->data[address2]].provinceCount--;
+                                nations[playerNation].provinceCount++;
+
+                                if(nations[scenario->borderTex->data[address2]].provinceCount == 0) {
+                                    for(int i = 0; i < 256; i++) {
+                                        nations[scenario->borderTex->data[address2]].wars[i] = false;
+                                        nations[i].wars[scenario->borderTex->data[address2]] = false;
+                                    }
+
+                                    if(selectedNation == scenario->borderTex->data[address2]) {
+                                        selectedNation = 0;
+                                    }
+
+                                    address = scenario->borderTex->data[address2] * scenario->colorTex->channels;
+
+                                    scenario->colorTex->data[address] = 0;
+                                    scenario->colorTex->data[address + 1] = 0;
+                                    scenario->colorTex->data[address + 2] = 0;
+
+                                    renderer_updateTexture(scenario->colorTex);
+                                }
+
+                                scenario->borderTex->data[address2] = playerNation;
+                                renderer_updateTexture(scenario->borderTex);
+                            }
                         }
-
-                        address = otherNation * scenario->colorTex->channels;
-
-                        scenario->colorTex->data[address] = 0;
-                        scenario->colorTex->data[address + 1] = 0;
-                        scenario->colorTex->data[address + 2] = 0;
-
-                        renderer_updateTexture(scenario->colorTex);
                     }
+
+                    lastRightMouseButton = true;
+
+                } else if(mode == 5) { // center editor
+                    double x;
+                    double y;
+
+                    glfwGetCursorPos(window_window, &x, &y);
+
+                    x = x / (float)window_width * 2 - 1;
+                    y = 2 - y / (float)window_height * 2 - 1;
+            
+                    x = (x * camPosZ + camPosX) / 2.75f;
+                    if(x < -1) x += 2;
+                    if(x > 1) x -= 2;
+                    y = y / aspect * camPosZ + camPosY;
+
+                    int tx = (int)floor((x + 0.5) * (float)map->centerTex->width);
+                    int ty = (int)floor((-y + 0.5) * (float)map->centerTex->height);
+
+                    int address = (tx + map->centerTex->width * ty) * map->centerTex->channels;
+
+                    map->centerTex->data[address] = 0;
+                    map->centerTex->data[address + 1] = 0;
+                    map->centerTex->data[address + 2] = 0;
+                    renderer_updateTexture(map->centerTex);
                 }
-            } else if(mode == 5) {
-                double x;
-                double y;
-
-                glfwGetCursorPos(window_window, &x, &y);
-
-                x = x / (float)window_width * 2 - 1;
-                y = 2 - y / (float)window_height * 2 - 1;
-        
-                x = (x * camPosZ + camPosX) / 2.75f;
-                if(x < -1) x += 2;
-                if(x > 1) x -= 2;
-                y = y / aspect * camPosZ + camPosY;
-
-                int tx = (int)floor((x + 0.5) * (float)map->centerTex->width);
-                int ty = (int)floor((-y + 0.5) * (float)map->centerTex->height);
-
-                int address = (tx + map->centerTex->width * ty) * map->centerTex->channels;
-
-                map->centerTex->data[address] = 0;
-                map->centerTex->data[address + 1] = 0;
-                map->centerTex->data[address + 2] = 0;
-                renderer_updateTexture(map->centerTex);
             }
         }
+
+    } else {
+        lastRightMouseButton = false;
     }
 
     if(glfwGetKey(window_window, GLFW_KEY_N) && !lastN) { // select new nation

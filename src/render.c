@@ -34,6 +34,26 @@ void gameRender() {
     renderer_setUniformVec3(mapShader, "camPos", camPosX - 2.75f, camPosY, camPosZ);
     renderer_renderMesh(quad, mapShader);
 
+    for(int i = 0; i < 4096; i++) {
+        if(armies[i].size == 0) continue;
+
+        float x = (float)armies[i].x / (float)map->provinceTex->width - 0.5f;
+        float y = 1 - (float)armies[i].y / (float)map->provinceTex->height - 0.5f;
+
+        x = (2.75 * x - camPosX) / camPosZ;
+        y = (y - camPosY) / camPosZ * aspect;
+
+        char buf[8];
+        sprintf(buf, "%d", armies[i].size);
+
+        if(selectedArmy == i) {
+            renderText(x, y, 0.002f / camPosZ, buf, 1.0, 1.0, 1.0);
+
+        } else {
+            renderText(x, y, 0.002f / camPosZ, buf, 0.75, 0.75, 0.75);
+        }
+    }
+
     double x;
     double y;
     glfwGetCursorPos(window_window, &x, &y);

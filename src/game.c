@@ -16,6 +16,12 @@ typedef struct {
     bool wars[256];
 } Nation;
 
+typedef struct {
+    int x;
+    int y;
+    int size;
+} Army;
+
 Map* map;
 Scenario* scenario;
 
@@ -34,12 +40,14 @@ Shader* fontShader;
 Mesh* quad;
 
 Nation nations[256];
+Army armies[4096];
 
 int mode;
 float aspect;
 unsigned char selected;
 unsigned char selectedNation;
 unsigned char playerNation;
+int selectedArmy;
 
 float camPosX;
 float camPosY;
@@ -49,5 +57,7 @@ float camVelY;
 float camVelZ;
 
 bool lastLeftMouseButton;
+bool lastRightMouseButton;
 
 bool lastN;
+bool lastR;

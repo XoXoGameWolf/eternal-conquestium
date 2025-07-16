@@ -48,6 +48,12 @@ void gameInit() {
         }
     }
 
+    for(int i = 0; i < 4096; i++) {
+        armies[i].x = 0;
+        armies[i].y = 0;
+        armies[i].size = 0;
+    }
+
     camPosX = 0.0f;
     camPosY = 0.0f;
     camPosZ = 1.0f;
@@ -60,8 +66,11 @@ void gameInit() {
     selected = 0;
     selectedNation = 0;
     playerNation = 0;
+    selectedArmy = -1;
 
     lastLeftMouseButton = false;
+    lastRightMouseButton = false;
 
     lastN = false;
+    lastR = false;
 }
