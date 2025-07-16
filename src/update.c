@@ -507,7 +507,7 @@ void gameUpdate() {
                             bool found = (selectedArmy == -1);
 
                             for(int i = 0; i < 4096; i++) {
-                                if(selectedArmy == -1 && scenario->borderTex->data[address2] == playerNation 
+                                if(selectedArmy == -1 && scenario->borderTex->data[address2] == (char)playerNation 
                                         && armies[i].x == tx && armies[i].y == ty) {
                                     selectedArmy = i;
                                     break;
@@ -515,7 +515,7 @@ void gameUpdate() {
                                 } else if(armies[i].x == tx && armies[i].y == ty && i == selectedArmy) {
                                     selectedArmy = -1;
 
-                                } else if(scenario->borderTex->data[address2] == playerNation && armies[i].x == tx && armies[i].y == ty) {
+                                } else if(scenario->borderTex->data[address2] == (char)playerNation && armies[i].x == tx && armies[i].y == ty) {
                                     armies[i].size += armies[selectedArmy].size;
                                     armies[selectedArmy].x = 0;
                                     armies[selectedArmy].y = 0;
@@ -532,20 +532,20 @@ void gameUpdate() {
 
                                     selectedArmy = -1;
                                     found = true;
-                                    nations[scenario->borderTex->data[address2]].provinceCount--;
+                                    nations[(unsigned char)scenario->borderTex->data[address2]].provinceCount--;
                                     nations[playerNation].provinceCount++;
 
-                                    if(nations[scenario->borderTex->data[address2]].provinceCount == 0) {
+                                    if(nations[(unsigned char)scenario->borderTex->data[address2]].provinceCount == 0) {
                                         for(int i = 0; i < 256; i++) {
-                                            nations[scenario->borderTex->data[address2]].wars[i] = false;
-                                            nations[i].wars[scenario->borderTex->data[address2]] = false;
+                                            nations[(unsigned char)scenario->borderTex->data[address2]].wars[i] = false;
+                                            nations[i].wars[(unsigned char)scenario->borderTex->data[address2]] = false;
                                         }
 
-                                        if(selectedNation == scenario->borderTex->data[address2]) {
+                                        if((char)selectedNation == scenario->borderTex->data[address2]) {
                                             selectedNation = 0;
                                         }
 
-                                        address = scenario->borderTex->data[address2] * scenario->colorTex->channels;
+                                        address = (unsigned char)scenario->borderTex->data[address2] * scenario->colorTex->channels;
 
                                         scenario->colorTex->data[address] = 0;
                                         scenario->colorTex->data[address + 1] = 0;
@@ -554,7 +554,7 @@ void gameUpdate() {
                                         renderer_updateTexture(scenario->colorTex);
                                     }
 
-                                    scenario->borderTex->data[address2] = playerNation;
+                                    scenario->borderTex->data[address2] = (char)playerNation;
                                     renderer_updateTexture(scenario->borderTex);
                                     break;
 
@@ -573,20 +573,20 @@ void gameUpdate() {
                                 armies[selectedArmy].x = tx;
                                 armies[selectedArmy].y = ty;
                                 selectedArmy = -1;
-                                nations[scenario->borderTex->data[address2]].provinceCount--;
+                                nations[(unsigned char)scenario->borderTex->data[address2]].provinceCount--;
                                 nations[playerNation].provinceCount++;
 
-                                if(nations[scenario->borderTex->data[address2]].provinceCount == 0) {
+                                if(nations[(unsigned char)scenario->borderTex->data[address2]].provinceCount == 0) {
                                     for(int i = 0; i < 256; i++) {
-                                        nations[scenario->borderTex->data[address2]].wars[i] = false;
-                                        nations[i].wars[scenario->borderTex->data[address2]] = false;
+                                        nations[(unsigned char)scenario->borderTex->data[address2]].wars[i] = false;
+                                        nations[i].wars[(unsigned char)scenario->borderTex->data[address2]] = false;
                                     }
 
-                                    if(selectedNation == scenario->borderTex->data[address2]) {
+                                    if((char)selectedNation == scenario->borderTex->data[address2]) {
                                         selectedNation = 0;
                                     }
 
-                                    address = scenario->borderTex->data[address2] * scenario->colorTex->channels;
+                                    address = (unsigned char)scenario->borderTex->data[address2] * scenario->colorTex->channels;
 
                                     scenario->colorTex->data[address] = 0;
                                     scenario->colorTex->data[address + 1] = 0;
@@ -595,7 +595,7 @@ void gameUpdate() {
                                     renderer_updateTexture(scenario->colorTex);
                                 }
 
-                                scenario->borderTex->data[address2] = playerNation;
+                                scenario->borderTex->data[address2] = (char)playerNation;
                                 renderer_updateTexture(scenario->borderTex);
                             }
                         }
