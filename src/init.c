@@ -11,13 +11,13 @@ void gameInit() {
     map = malloc(sizeof(Map));
     scenario = malloc(sizeof(Scenario));
 
-    mainMenuTex = renderer_createTexture("resources/ui/main_menu.bmp");
-    editorTex = renderer_createTexture("resources/ui/editor.bmp");
-    nationSelectTex = renderer_createTexture("resources/ui/nation_select.bmp");
-    gameplayTex = renderer_createTexture("resources/ui/gameplay.bmp");
-    diplomacyTex = renderer_createTexture("resources/ui/diplomacy.bmp");
+    mainMenuTex = renderer_createTexture("resources/ui/main_menu.png");
+    editorTex = renderer_createTexture("resources/ui/editor.png");
+    nationSelectTex = renderer_createTexture("resources/ui/nation_select.png");
+    gameplayTex = renderer_createTexture("resources/ui/gameplay.png");
+    diplomacyTex = renderer_createTexture("resources/ui/diplomacy.png");
 
-    fontTex = renderer_createTexture("resources/font/font.bmp");
+    fontTex = renderer_createTexture("resources/font/font.png");
 
     map->provinceTex = renderer_createTexture("resources/map/provinces.bmp");
     map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
