@@ -11,19 +11,19 @@ void gameInit() {
     map = malloc(sizeof(Map));
     scenario = malloc(sizeof(Scenario));
 
-    mainMenuTex = renderer_createTexture("resources/ui/main_menu.png");
-    editorTex = renderer_createTexture("resources/ui/editor.png");
-    nationSelectTex = renderer_createTexture("resources/ui/nation_select.png");
-    gameplayTex = renderer_createTexture("resources/ui/gameplay.png");
-    diplomacyTex = renderer_createTexture("resources/ui/diplomacy.png");
+    mainMenuTex = renderer_createTexture("resources/ui/main_menu.png", false);
+    editorTex = renderer_createTexture("resources/ui/editor.png", false);
+    nationSelectTex = renderer_createTexture("resources/ui/nation_select.png", false);
+    gameplayTex = renderer_createTexture("resources/ui/gameplay.png", false);
+    diplomacyTex = renderer_createTexture("resources/ui/diplomacy.png", false);
 
-    fontTex = renderer_createTexture("resources/font/font.png");
+    fontTex = renderer_createTexture("resources/font/font.png", false);
 
-    map->provinceTex = renderer_createTexture("resources/map/provinces.bmp");
-    map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
-    map->centerTex = renderer_createTexture("resources/map/centers.bmp");
-    scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
-    scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp");
+    map->provinceTex = renderer_createTexture("resources/map/provinces.bmp", true);
+    map->terrainTex = renderer_createTexture("resources/map/terrain.bmp", true);
+    map->centerTex = renderer_createTexture("resources/map/centers.bmp", true);
+    scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp", true);
+    scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp", true);
     quad = renderer_createMeshFast(
         QUAD_VERTICES, sizeof(QUAD_VERTICES),
         QUAD_COORDS, sizeof(QUAD_COORDS),

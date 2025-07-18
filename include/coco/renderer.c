@@ -79,7 +79,7 @@ void renderer_init(float red, float green, float blue) {
     renderer_textures = malloc(sizeof(Texture*) * 4096);
 }
 
-Texture* renderer_createTexture(char* path) {
+Texture* renderer_createTexture(char* path, bool aliased) {
     Texture* texture = malloc(sizeof(Texture));
     texture->data = stbi_load(path, &texture->width, &texture->height, &texture->channels, 0);
 
@@ -87,8 +87,10 @@ Texture* renderer_createTexture(char* path) {
 
     glBindTexture(GL_TEXTURE_2D, texture->texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, (texture->channels == 4 ? GL_RGBA : GL_RGB), GL_UNSIGNED_BYTE, texture->data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    if(aliased) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    }
     glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -106,15 +108,17 @@ void renderer_saveTexture(char* path, Texture* texture) {
     stbi_write_bmp(path, texture->width, texture->height, texture->channels, texture->data);
 }
 
-void renderer_updateTexture(Texture* texture) {
+void renderer_updateTexture(Texture* texture, bool aliased) {
     glDeleteTextures(1, &texture->texture);
 
     glGenTextures(1, &texture->texture);
 
     glBindTexture(GL_TEXTURE_2D, texture->texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, (texture->channels == 4 ? GL_RGBA : GL_RGB), GL_UNSIGNED_BYTE, texture->data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    if(aliased) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    }
     glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
 }

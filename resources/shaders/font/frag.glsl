@@ -15,7 +15,7 @@ void main() {
         coord.y
     ));
 
-    if(_color.r == 0) {
+    if(_color.r < 0.5f) {
         discard;
     }
 

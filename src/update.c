@@ -195,7 +195,7 @@ void gameUpdate() {
                 map->centerTex->data[address] = 255;
                 map->centerTex->data[address + 1] = 255;
                 map->centerTex->data[address + 2] = 255;
-                renderer_updateTexture(map->centerTex);
+                renderer_updateTexture(map->centerTex, true);
             }
 
             lastLeftMouseButton = true;
@@ -240,10 +240,10 @@ void gameUpdate() {
                 renderer_deleteTexture(map->centerTex);
                 renderer_deleteTexture(scenario->borderTex);
                 renderer_deleteTexture(scenario->colorTex);
-                map->terrainTex = renderer_createTexture("resources/map/terrain.bmp");
-                map->centerTex = renderer_createTexture("resources/map/centers.bmp");
-                scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp");
-                scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp");
+                map->terrainTex = renderer_createTexture("resources/map/terrain.bmp", true);
+                map->centerTex = renderer_createTexture("resources/map/centers.bmp", true);
+                scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp", true);
+                scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp", true);
 
                 for(int x = 0; x < scenario->borderTex->width; x++) {
                     for(int y = 0; y < scenario->borderTex->height; y++) {
@@ -408,13 +408,13 @@ void gameUpdate() {
                             map->terrainTex->data[address] = selected;
                             map->terrainTex->data[address + 1] = 0;
                             map->terrainTex->data[address + 2] = 0;
-                            renderer_updateTexture(map->terrainTex);
+                            renderer_updateTexture(map->terrainTex, true);
 
                             if(selected == 2) {
                                 scenario->borderTex->data[address] = 0;
                                 scenario->borderTex->data[address + 1] = 0;
                                 scenario->borderTex->data[address + 2] = 0;
-                                renderer_updateTexture(scenario->borderTex);
+                                renderer_updateTexture(scenario->borderTex, true);
                             }
                         }
                         // border editor
@@ -425,7 +425,7 @@ void gameUpdate() {
                             scenario->borderTex->data[address] = selected;
                             scenario->borderTex->data[address + 1] = 0;
                             scenario->borderTex->data[address + 2] = 0;
-                            renderer_updateTexture(scenario->borderTex);
+                            renderer_updateTexture(scenario->borderTex, true);
                         }
                     }
                 }
@@ -551,11 +551,11 @@ void gameUpdate() {
                                         scenario->colorTex->data[address + 1] = 0;
                                         scenario->colorTex->data[address + 2] = 0;
 
-                                        renderer_updateTexture(scenario->colorTex);
+                                        renderer_updateTexture(scenario->colorTex, true);
                                     }
 
                                     scenario->borderTex->data[address2] = (char)playerNation;
-                                    renderer_updateTexture(scenario->borderTex);
+                                    renderer_updateTexture(scenario->borderTex, true);
                                     break;
 
                                 } else if(armies[i].x == tx && armies[i].y == ty && armies[i].size > armies[selectedArmy].size) {
@@ -592,11 +592,11 @@ void gameUpdate() {
                                     scenario->colorTex->data[address + 1] = 0;
                                     scenario->colorTex->data[address + 2] = 0;
 
-                                    renderer_updateTexture(scenario->colorTex);
+                                    renderer_updateTexture(scenario->colorTex, true);
                                 }
 
                                 scenario->borderTex->data[address2] = (char)playerNation;
-                                renderer_updateTexture(scenario->borderTex);
+                                renderer_updateTexture(scenario->borderTex, true);
                             }
                         }
                     }
@@ -625,7 +625,7 @@ void gameUpdate() {
                     map->centerTex->data[address] = 0;
                     map->centerTex->data[address + 1] = 0;
                     map->centerTex->data[address + 2] = 0;
-                    renderer_updateTexture(map->centerTex);
+                    renderer_updateTexture(map->centerTex, true);
                 }
             }
         }
@@ -647,7 +647,7 @@ void gameUpdate() {
             scenario->colorTex->data[selected * scenario->colorTex->channels] = rand() % 256;
             scenario->colorTex->data[selected * scenario->colorTex->channels + 1] = rand() % 256;
             scenario->colorTex->data[selected * scenario->colorTex->channels + 2] = rand() % 256;
-            renderer_updateTexture(scenario->colorTex);
+            renderer_updateTexture(scenario->colorTex, true);
         }
     }
     lastN = glfwGetKey(window_window, GLFW_KEY_N);
