@@ -19,11 +19,11 @@ void gameInit() {
 
     fontTex = renderer_createTexture("resources/font/font.png", false);
 
-    map->provinceTex = renderer_createTexture("resources/map/provinces.bmp", true);
-    map->terrainTex = renderer_createTexture("resources/map/terrain.bmp", true);
-    map->centerTex = renderer_createTexture("resources/map/centers.bmp", true);
-    scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp", true);
-    scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp", true);
+    map->provinceTex = renderer_createTexture("resources/map/provinces.png", true);
+    map->terrainTex = renderer_createTexture("resources/map/terrain.png", true);
+    map->centerTex = renderer_createTexture("resources/map/centers.png", true);
+    scenario->borderTex = renderer_createTexture("resources/scenario/borders.png", true);
+    scenario->colorTex = renderer_createTexture("resources/scenario/colors.png", true);
     quad = renderer_createMeshFast(
         QUAD_VERTICES, sizeof(QUAD_VERTICES),
         QUAD_COORDS, sizeof(QUAD_COORDS),
