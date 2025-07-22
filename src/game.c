@@ -9,6 +9,8 @@ typedef struct {
 typedef struct {
     Texture* borderTex;
     Texture* colorTex;
+    Texture* borderTexOriginal;
+    Texture* colorTexOriginal;
 } Scenario;
 
 typedef struct {

@@ -14,7 +14,7 @@ void renderText(float x, float y, float scale, char* text, float r, float g, flo
     renderer_renderMesh(quad, fontShader);
 }
 
-void gameRender() {
+void render() {
     renderer_update();
 
     renderer_setUniformTexture(mapShader, "provinceTex", map->provinceTex, 0);
@@ -74,13 +74,13 @@ void gameRender() {
         renderer_setUniformTexture(uiShader, "tex", editorTex, 4);
         renderer_renderMesh(quad, uiShader);
 
-        renderText(52.0 / 1600.0 * 2 - 1, 2 - 26.0 / 900.0 * 2 - 1, 89.0 / 1600.0, "Back", 0, 0, 0);
+        renderText(85.0 / 1600.0 * 2 - 1, 2 - 40.0 / 900.0 * 2 - 1, 150.0 / 1600.0, "Back", 0, 0, 0);
 
     } else if(mode == 3) {
         renderer_setUniformTexture(uiShader, "tex", nationSelectTex, 4);
         renderer_renderMesh(quad, uiShader);
 
-        renderText(52.0 / 1600.0 * 2 - 1, 2 - 26.0 / 900.0 * 2 - 1, 89.0 / 1600.0, "Back", 0, 0, 0);
+        renderText(85.0 / 1600.0 * 2 - 1, 2 - 40.0 / 900.0 * 2 - 1, 150.0 / 1600.0, "Back", 0, 0, 0);
         renderText(817 / 1600.0 * 2 - 1, 2 - 34.0 / 900.0 * 2 - 1, 443.0 / 1600.0 * 0.8, "Select Nation", 0, 0, 0);
 
     } else if(mode == 4 && selectedNation == 0) {
@@ -102,6 +102,4 @@ void gameRender() {
             renderText(151.0 / 1600.0 * 2 - 1, 2 - 326.0 / 900.0 * 2 - 1, 253 / 1600.0 * 0.8, "Declare War", 0, 0, 0);
         }
     }
-
-    window_update();
 }

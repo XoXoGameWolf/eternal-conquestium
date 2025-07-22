@@ -105,7 +105,7 @@ Texture* renderer_createTexture(char* path, bool aliased) {
 }
 
 void renderer_saveTexture(char* path, Texture* texture) {
-    stbi_write_bmp(path, texture->width, texture->height, texture->channels, texture->data);
+    stbi_write_png(path, texture->width, texture->height, texture->channels, texture->data, 0);
 }
 
 void renderer_updateTexture(Texture* texture, bool aliased) {
@@ -121,6 +121,20 @@ void renderer_updateTexture(Texture* texture, bool aliased) {
     }
     glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+Texture* renderer_copyTexture(Texture* orig) {
+    Texture* dest = malloc(sizeof(Texture));
+
+    dest->width = orig->width;
+    dest->height = orig->height;
+    dest->channels = orig->channels;
+
+    dest->texture = orig->texture;
+    dest->data = malloc(orig->width * orig->height * orig->channels);
+    memcpy(dest->data, orig->data, orig->width * orig->height * orig->channels);
+
+    return dest;
 }
 
 Buffer* renderer_createFloatBuffer(float* data, int size) {

@@ -1,6 +1,6 @@
 #pragma once
 
-void gameUpdate() {
+void update() {
     aspect = (float)window_width / (float)window_height;
 
     if(glfwGetKey(window_window, GLFW_KEY_W) && mode != 0) { // move camera up
@@ -148,11 +148,11 @@ void gameUpdate() {
 
         glfwGetCursorPos(window_window, &x, &y);
 
-        if(mode == 5 && !lastLeftMouseButton) {
+        if(mode == 5 && !lastLeftMouseButton) { // center editor
             int tx = (int)floor(x / window_width * editorTex->width);
             int ty = (int)floor(y / window_height * editorTex->height);
 
-            if(tx > 0 && tx < 156 && ty > 0 && ty < 53) {
+            if(tx > 0 && tx < 227 && ty > 0 && ty < 79) {
                 renderer_saveTexture("resources/map/terrain.png", map->terrainTex);
                 renderer_saveTexture("resources/map/centers.png", map->centerTex);
                 renderer_saveTexture("resources/scenario/borders.png", scenario->borderTex);
@@ -192,9 +192,9 @@ void gameUpdate() {
 
                 int address = (tx + map->centerTex->width * ty) * map->centerTex->channels;
 
-                map->centerTex->data[address] = 255;
-                map->centerTex->data[address + 1] = 255;
-                map->centerTex->data[address + 2] = 255;
+                map->centerTex->data[address] = (char)255;
+                map->centerTex->data[address + 1] = (char)255;
+                map->centerTex->data[address + 2] = (char)255;
                 renderer_updateTexture(map->centerTex, true);
             }
 
@@ -219,7 +219,7 @@ void gameUpdate() {
 
             lastLeftMouseButton = true;
         
-        } else if(mode == 4 && !lastLeftMouseButton) {
+        } else if(mode == 4 && !lastLeftMouseButton) { // gameplay
             int tx = (int)floor(x / window_width * 1600);
             int ty = (int)floor(y / window_height * 900);
 
@@ -236,14 +236,8 @@ void gameUpdate() {
                     }
                 }
 
-                renderer_deleteTexture(map->terrainTex);
-                renderer_deleteTexture(map->centerTex);
-                renderer_deleteTexture(scenario->borderTex);
-                renderer_deleteTexture(scenario->colorTex);
-                map->terrainTex = renderer_createTexture("resources/map/terrain.png", true);
-                map->centerTex = renderer_createTexture("resources/map/centers.png", true);
-                scenario->borderTex = renderer_createTexture("resources/scenario/borders.png", true);
-                scenario->colorTex = renderer_createTexture("resources/scenario/colors.png", true);
+                scenario->borderTex = renderer_copyTexture(scenario->borderTexOriginal);
+                scenario->colorTex = renderer_copyTexture(scenario->colorTexOriginal);
 
                 for(int x = 0; x < scenario->borderTex->width; x++) {
                     for(int y = 0; y < scenario->borderTex->height; y++) {
@@ -308,7 +302,7 @@ void gameUpdate() {
             int tx = (int)floor(x / window_width * nationSelectTex->width);
             int ty = (int)floor(y / window_height * nationSelectTex->height);
 
-            if(tx > 0 && tx < 156 && ty > 0 && ty < 53) {
+            if(tx > 0 && tx < 227 && ty > 0 && ty < 79) {
                 mode = 0;
                 selectedNation = 0;
 
@@ -353,7 +347,7 @@ void gameUpdate() {
             int tx = (int)floor(x / window_width * editorTex->width);
             int ty = (int)floor(y / window_height * editorTex->height);
 
-            if(tx > 0 && tx < 156 && ty > 0 && ty < 53) {
+            if(tx > 0 && tx < 227 && ty > 0 && ty < 79) {
                 renderer_saveTexture("resources/map/terrain.png", map->terrainTex);
                 renderer_saveTexture("resources/map/centers.png", map->centerTex);
                 renderer_saveTexture("resources/scenario/borders.png", scenario->borderTex);
@@ -638,9 +632,9 @@ void gameUpdate() {
         if(mode == 2) {
             selected = 1;
 
-            while(!scenario->colorTex->data[selected * scenario->colorTex->channels] == 0 ||
-                    !scenario->colorTex->data[selected * scenario->colorTex->channels + 1] == 0 ||
-                    !scenario->colorTex->data[selected * scenario->colorTex->channels + 2] == 0) {
+            while(!(scenario->colorTex->data[selected * scenario->colorTex->channels] == 0) ||
+                    !(scenario->colorTex->data[selected * scenario->colorTex->channels + 1] == 0) ||
+                    !(scenario->colorTex->data[selected * scenario->colorTex->channels + 2] == 0)) {
                 selected++;
             }
 
