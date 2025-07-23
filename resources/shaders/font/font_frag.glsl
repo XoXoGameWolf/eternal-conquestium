@@ -5,15 +5,15 @@ precision mediump int;
 uniform sampler2D tex;
 uniform vec3 color;
 uniform int data[32];
-uniform int length;
+uniform int _length;
 
 in vec2 coord;
 out vec4 out_color;
 
 void main() {
-    int character = int(coord.x * float(length));
+    int character = int(coord.x * float(_length));
     vec4 _color = texture(tex, vec2(
-        coord.x / 256.0f * float(length) + float(data[character]) / 256.0f - float(character) / 256.0f, 
+        coord.x / 256.0f * float(_length) + float(data[character]) / 256.0f - float(character) / 256.0f, 
         coord.y
     ));
 

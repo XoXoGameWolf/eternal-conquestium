@@ -3,7 +3,7 @@ precision mediump float;
 precision mediump int;
 
 uniform float aspect;
-uniform int length;
+uniform int _length;
 uniform vec2 pos;
 uniform float scale;
 
@@ -14,7 +14,7 @@ out vec2 coord;
 void main() {
     gl_Position = vec4(
         in_pos.x * 2.0f * scale + pos.x, 
-        in_pos.y / aspect * 2.0f * scale / float(length) * 4.0f + pos.y, 
+        in_pos.y / aspect * 2.0f * scale / float(_length) * 4.0f + pos.y, 
         in_pos.z, 
         1.0f
     );

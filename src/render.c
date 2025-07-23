@@ -7,7 +7,7 @@ void renderText(float x, float y, float scale, char* text, float r, float g, flo
     int data[length];
     for(int i = 0; i < length; i++) data[i] = text[i];
     renderer_setUniformIntArray(fontShader, "data", data, 32);
-    renderer_setUniformInt(fontShader, "length", length);
+    renderer_setUniformInt(fontShader, "_length", length);
     renderer_setUniformVec2(fontShader, "pos", x, y);
     renderer_setUniformFloat(fontShader, "scale", scale);
     renderer_setUniformVec3(fontShader, "color", r, g, b);
