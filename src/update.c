@@ -227,8 +227,8 @@ void update() {
                     }
                 }
 
-                scenario->borderTex = renderer_copyTexture(scenario->borderTexOriginal);
-                scenario->colorTex = renderer_copyTexture(scenario->colorTexOriginal);
+                scenario->borderTex = renderer_createTexture("resources/scenario/borders.png", true);
+                scenario->colorTex = renderer_createTexture("resources/scenario/colors.png", true);
 
                 for(int x = 0; x < scenario->borderTex->width; x++) {
                     for(int y = 0; y < scenario->borderTex->height; y++) {

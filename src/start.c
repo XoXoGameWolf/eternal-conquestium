@@ -21,10 +21,8 @@ void start() {
     map->provinceTex = renderer_createTexture("resources/map/provinces.png", true);
     map->terrainTex = renderer_createTexture("resources/map/terrain.png", true);
     map->centerTex = renderer_createTexture("resources/map/centers.png", true);
-    scenario->borderTexOriginal = renderer_createTexture("resources/scenario/borders.png", true);
-    scenario->colorTexOriginal = renderer_createTexture("resources/scenario/colors.png", true);
-    scenario->borderTex = renderer_copyTexture(scenario->borderTexOriginal);
-    scenario->colorTex = renderer_copyTexture(scenario->colorTexOriginal);
+    scenario->borderTex = renderer_createTexture("resources/scenario/borders.png", true);
+    scenario->colorTex = renderer_createTexture("resources/scenario/colors.png", true);
     quad = renderer_createMeshFast(
         QUAD_VERTICES, sizeof(QUAD_VERTICES),
         QUAD_COORDS, sizeof(QUAD_COORDS),
