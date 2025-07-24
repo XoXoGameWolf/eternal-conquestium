@@ -152,7 +152,7 @@ void update() {
             int tx = (int)floor(x / window_width * editorTex->width);
             int ty = (int)floor(y / window_height * editorTex->height);
 
-            if(tx > 0 && tx < 227 && ty > 0 && ty < 79) {
+            if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
                 renderer_saveTexture("resources/map/terrain.png", map->terrainTex);
                 renderer_saveTexture("resources/map/centers.png", map->centerTex);
                 renderer_saveTexture("resources/scenario/borders.png", scenario->borderTex);
@@ -201,19 +201,19 @@ void update() {
             lastLeftMouseButton = true;
 
         } else if(mode == 0 && !lastLeftMouseButton) { // main menu
-            int tx = (int)floor(x / window_width * 1600);
-            int ty = (int)floor(y / window_height * 900);
+            int tx = (int)floor(x / window_width * mainMenuTex->width);
+            int ty = (int)floor(y / window_height * mainMenuTex->height);
 
-            if(tx > 629 && tx < 982 && ty > 286 && ty < 378) {
+            if(tx > 805 && tx < 1257 && ty > 325 && ty < 430) {
                 mode = 3;
             }
-            if(tx > 629 && tx < 982 && ty > 398 && ty < 486) {
+            if(tx > 805 && tx < 1257 && ty > 448 && ty < 553) {
                 mode = 1;
             }
-            if(tx > 629 && tx < 982 && ty > 507 && ty < 586) {
+            if(tx > 805 && tx < 1257 && ty > 567 && ty < 667) {
                 mode = 2;
             }
-            if(tx > 629 && tx < 982 && ty > 597 && ty < 676) {
+            if(tx > 805 && tx < 1257 && ty > 679 && ty < 769) {
                 window_open = false;
             }
 
@@ -223,7 +223,7 @@ void update() {
             int tx = (int)floor(x / window_width * 1600);
             int ty = (int)floor(y / window_height * 900);
 
-            if(tx > 0 && tx < 227 && ty > 0 && ty < 79) {
+            if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
                 mode = 0;
                 selectedNation = 0;
                 playerNation = 0;
@@ -251,10 +251,10 @@ void update() {
                     armies[i].y = 0;
                 }
 
-            } else if(selectedNation != 0 && tx > 275 && tx < 311 && ty > 241 && ty < 275) {
+            } else if(selectedNation != 0 && tx > 350 && tx < 398 && ty > 274 && ty < 317) {
                 selectedNation = 0;
             
-            } else if(selectedNation != 0 && tx > 25 && tx < 278 && ty > 303 && ty < 346) {
+            } else if(selectedNation != 0 && tx > 32 && tx < 356 && ty > 345 && ty < 394) {
                 bool war = nations[playerNation].wars[selectedNation] || nations[selectedNation].wars[playerNation];
 
                 if(war) {
@@ -266,7 +266,7 @@ void update() {
                     nations[selectedNation].wars[playerNation] = true;
                 }
 
-            } else if(selectedNation != 0 && tx > 0 && tx < 311 && ty > 241 && ty < 705) {
+            } else if(selectedNation != 0 && tx > 0 && tx < 398 && ty > 274 && ty < 802) {
 
 
             } else {
@@ -298,15 +298,15 @@ void update() {
 
             lastLeftMouseButton = true;
 
-        } else if(mode == 3 && !lastLeftMouseButton) {
+        } else if(mode == 3 && !lastLeftMouseButton) { // nation selection
             int tx = (int)floor(x / window_width * nationSelectTex->width);
             int ty = (int)floor(y / window_height * nationSelectTex->height);
 
-            if(tx > 0 && tx < 227 && ty > 0 && ty < 79) {
+            if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
                 mode = 0;
                 selectedNation = 0;
 
-            } else if(tx > 598 && tx < 1042 && ty > 0 && ty < 68) {
+            } else if(tx > 765 && tx < 1334 && ty > 0 && ty < 77) {
                 if(selectedNation != 0) {
                     playerNation = selectedNation;
                     selectedNation = 0;
@@ -347,7 +347,7 @@ void update() {
             int tx = (int)floor(x / window_width * editorTex->width);
             int ty = (int)floor(y / window_height * editorTex->height);
 
-            if(tx > 0 && tx < 227 && ty > 0 && ty < 79) {
+            if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
                 renderer_saveTexture("resources/map/terrain.png", map->terrainTex);
                 renderer_saveTexture("resources/map/centers.png", map->centerTex);
                 renderer_saveTexture("resources/scenario/borders.png", scenario->borderTex);
