@@ -220,8 +220,8 @@ void update() {
             lastLeftMouseButton = true;
         
         } else if(mode == 4 && !lastLeftMouseButton) { // gameplay
-            int tx = (int)floor(x / window_width * 1600);
-            int ty = (int)floor(y / window_height * 900);
+            int tx = (int)floor(x / window_width * gameplayTex->width);
+            int ty = (int)floor(y / window_height * gameplayTex->height);
 
             if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
                 mode = 0;
@@ -251,7 +251,7 @@ void update() {
                     armies[i].y = 0;
                 }
 
-            } else if(selectedNation != 0 && tx > 350 && tx < 398 && ty > 274 && ty < 317) {
+            } else if(selectedNation != 0 && tx > 352 && tx < 398 && ty > 274 && ty < 317) {
                 selectedNation = 0;
             
             } else if(selectedNation != 0 && tx > 32 && tx < 356 && ty > 345 && ty < 394) {

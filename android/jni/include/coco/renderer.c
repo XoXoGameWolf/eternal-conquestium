@@ -65,27 +65,45 @@ void renderer_init(float red, float green, float blue) {
 
 Texture* renderer_createTexture(char* path, bool aliased) {
     Texture* texture = malloc(sizeof(Texture));
-    char* data = malloc(4194304); // 4194304 B = 4 MiB
-    readFile(data, path, 4194304);
-    texture->data = (char*)stbi_load_from_memory((unsigned char*)data, 4194304, &texture->width, &texture->height, &texture->channels, 0);
+    char* data = calloc(1, 4194304);
+    int bytesRead = readFile(data, path, 4194304);
+
+    if (bytesRead <= 0) {
+        free(data);
+        free(texture);
+        return NULL;
+    }
+
+    texture->data = (char*)stbi_load_from_memory((unsigned char*)data, bytesRead,
+                                                 &texture->width, &texture->height,
+                                                 &texture->channels, 0);
+
+    if (!texture->data) {
+        free(data);
+        free(texture);
+        return NULL;
+    }
 
     glGenTextures(1, &texture->texture);
-
     glBindTexture(GL_TEXTURE_2D, texture->texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, (texture->channels == 4 ? GL_RGBA : GL_RGB), GL_UNSIGNED_BYTE, texture->data);
+    glTexImage2D(GL_TEXTURE_2D, 0, texture->channels == 4 ? GL_RGBA : GL_RGB, texture->width, texture->height,
+                 0, texture->channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->data);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    if(aliased) {
+
+    if (aliased) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
     } else {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
-    glGenerateMipmap(GL_TEXTURE_2D);
+
+    //glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    free(data);
     return texture;
 }
 
@@ -184,18 +202,26 @@ Mesh* renderer_createMeshFast(float* vertices, int vertices_size, float* coords,
 }
 
 Shader* renderer_createShader(char* vertexPath, char* fragmentPath) {
-    char* vertexShaderSourceDynamic = malloc(65536);
-    for(int i = 0; i < 65536; i++) {vertexShaderSourceDynamic[i] = 0;}
-    readFile(vertexShaderSourceDynamic, vertexPath, 65536);
+    Shader* shader = malloc(sizeof(Shader));
 
-    char* fragmentShaderSourceDynamic = malloc(65536);
-    for(int i = 0; i < 65536; i++) {fragmentShaderSourceDynamic[i] = 0;}
-    readFile(fragmentShaderSourceDynamic, fragmentPath, 65536);
+    char* vertexShaderSourceDynamic = calloc(1, 65536 + 1);
+    int vertexSize = readFile(vertexShaderSourceDynamic, vertexPath, 65536);
+    if (vertexSize <= 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "Coco Engine", "Failed to read vertex shader");
+        exit(-1);
+    }
+    vertexShaderSourceDynamic[vertexSize] = '\0';
+
+    char* fragmentShaderSourceDynamic = calloc(1, 65536 + 1);
+    int fragmentSize = readFile(fragmentShaderSourceDynamic, fragmentPath, 65536);
+    if (fragmentSize <= 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "Coco Engine", "Failed to read fragment shader");
+        exit(-1);
+    }
+    fragmentShaderSourceDynamic[fragmentSize] = '\0';
 
     const char* vertexShaderSource = vertexShaderSourceDynamic;
     const char* fragmentShaderSource = fragmentShaderSourceDynamic;
-
-    Shader* shader = malloc(sizeof(Shader));
 
     shader->vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(shader->vertexShader, 1, &vertexShaderSource, NULL);
@@ -204,35 +230,38 @@ Shader* renderer_createShader(char* vertexPath, char* fragmentPath) {
     int success;
     char infoLog[512];
     glGetShaderiv(shader->vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success) {
+    if (!success) {
         glGetShaderInfoLog(shader->vertexShader, 512, NULL, infoLog);
-        __android_log_print(ANDROID_LOG_INFO, "Coco Engine", "Vertex shader was not compiled. Info log: \n%s\n", infoLog);
+        __android_log_print(ANDROID_LOG_ERROR, "Coco Engine", "Vertex shader compile error:\n%s", infoLog);
         exit(-1);
     }
-    
+
     shader->fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(shader->fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(shader->fragmentShader);
 
     glGetShaderiv(shader->fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success) {
+    if (!success) {
         glGetShaderInfoLog(shader->fragmentShader, 512, NULL, infoLog);
-        __android_log_print(ANDROID_LOG_INFO, "Coco Engine", "Fragment shader was not compiled. Info log: \n%s\n", infoLog);
+        __android_log_print(ANDROID_LOG_ERROR, "Coco Engine", "Fragment shader compile error:\n%s", infoLog);
         exit(-1);
     }
 
     shader->program = glCreateProgram();
-
     glAttachShader(shader->program, shader->vertexShader);
     glAttachShader(shader->program, shader->fragmentShader);
     glLinkProgram(shader->program);
 
     glGetProgramiv(shader->program, GL_LINK_STATUS, &success);
-    if(!success) {
+    if (!success) {
         glGetProgramInfoLog(shader->program, 512, NULL, infoLog);
-        __android_log_print(ANDROID_LOG_INFO, "Coco Engine", "Shader program was not linked. Info log: \n%s\n", infoLog);
+        __android_log_print(ANDROID_LOG_ERROR, "Coco Engine", "Shader program link error:\n%s", infoLog);
         exit(-1);
     }
+
+    // Optional: free source buffers now that shader is compiled
+    free(vertexShaderSourceDynamic);
+    free(fragmentShaderSourceDynamic);
 
     return shader;
 }

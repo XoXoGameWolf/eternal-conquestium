@@ -26,6 +26,7 @@ void render() {
     renderer_setUniformVec3(mapShader, "camPos", camPosX, camPosY, camPosZ);
     renderer_setUniformFloat(mapShader, "time", glfwGetTime());
     renderer_setUniformFloat(mapShader, "selectedNation", (float)selectedNation / 255.0f);
+    renderer_setUniformInt(mapShader, "mode", mode);
     renderer_renderMesh(quad, mapShader);
 
     renderer_setUniformVec3(mapShader, "camPos", camPosX + 2.75f, camPosY, camPosZ);

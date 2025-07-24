@@ -10,6 +10,7 @@ uniform sampler2D colorTex;
 uniform vec3 camPos;
 uniform float selectedNation;
 uniform float time;
+uniform int mode;
 
 in vec2 coord_int;
 out vec4 out_color;
@@ -101,5 +102,9 @@ void main() {
 
     } else if(onProvinceBorder(1.0f)) {
         out_color *= vec4(1.0f - pow(1.0f - camPos.z, 8.0f) * 0.5f, 1.0f - pow(1.0f - camPos.z, 8.0f) * 0.5f, 1.0f - pow(1.0f - camPos.z, 8.0f) * 0.5f, 1.0f);
+    }
+
+    if(mode == 5 && texture(centerTex, coord_int).r == 1.0f) {
+        out_color = vec4(1.0f);
     }
 }

@@ -1,43 +1,42 @@
 #pragma once
 
-void readFile(char* buf, char* path, int size) {
+int readFile(char* buf, char* path, int maxSize) {
     jclass r = (*env)->FindClass(env, "org/coco/R$raw");
 
-    char* nameDynamic = malloc(64);
+    char nameDynamic[64];
     int i = 0;
 
-    for(int j = 0; j < strlen(path); j++) {
-        if(path[j] == '/') {
-            free(nameDynamic);
-            nameDynamic = malloc(64);
+    for (int j = 0; j < strlen(path); j++) {
+        if (path[j] == '/') {
             i = 0;
             continue;
-
-        } else if(path[j] == '.') {
+        } else if (path[j] == '.') {
             nameDynamic[i] = 0;
             break;
         }
-
-        nameDynamic[i] = path[j];
-        i++;
+        nameDynamic[i++] = path[j];
     }
 
-    const char* name = nameDynamic;
-
-    //__android_log_print(ANDROID_LOG_INFO, "Coco Engine", "%s", name);
-
-    jfieldID fid = (*env)->GetStaticFieldID(env, r, name, "I");
-    int rid = (int)((*env)->GetStaticIntField(env, r, fid));
+    jfieldID fid = (*env)->GetStaticFieldID(env, r, nameDynamic, "I");
+    int rid = (*env)->GetStaticIntField(env, r, fid);
 
     jmethodID mid = (*env)->GetMethodID(env, (*env)->GetObjectClass(env, res), "openRawResource", "(I)Ljava/io/InputStream;");
-    jobject stream = (*env)->CallObjectMethod(env, res, mid, (jint)rid);
+    jobject stream = (*env)->CallObjectMethod(env, res, mid, rid);
 
-    jbyteArray jdata = (*env)->NewByteArray(env, size);
+    jmethodID availableMid = (*env)->GetMethodID(env, (*env)->GetObjectClass(env, stream), "available", "()I");
+    jint available = (*env)->CallIntMethod(env, stream, availableMid);
 
+    if (available > maxSize) available = maxSize;
+
+    jbyteArray jdata = (*env)->NewByteArray(env, available);
     mid = (*env)->GetMethodID(env, (*env)->GetObjectClass(env, stream), "read", "([B)I");
-    (*env)->CallIntMethod(env, stream, mid, jdata);
+    jint bytesRead = (*env)->CallIntMethod(env, stream, mid, jdata);
 
-    char* data = (char*)((*env)->GetByteArrayElements(env, jdata, false));
+    if (bytesRead <= 0) return 0;
 
-    memcpy(buf, data, size);
+    jbyte* data = (*env)->GetByteArrayElements(env, jdata, NULL);
+    memcpy(buf, data, bytesRead);
+    (*env)->ReleaseByteArrayElements(env, jdata, data, JNI_ABORT);
+
+    return bytesRead;
 }
