@@ -3,27 +3,27 @@
 void update() {
     aspect = (float)window_width / (float)window_height;
 
-    if(glfwGetKey(window_window, GLFW_KEY_W) && mode != 0) { // move camera up
+    if(glfwGetKey(window_window, GLFW_KEY_W) && mode != 0 && mode != 6) { // move camera up
         camVelY += 0.001f * camPosZ;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_A) && mode != 0) { // move camera left
+    if(glfwGetKey(window_window, GLFW_KEY_A) && mode != 0 && mode != 6) { // move camera left
         camVelX -= 0.001f * camPosZ;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_S) && mode != 0) { // move camera down
+    if(glfwGetKey(window_window, GLFW_KEY_S) && mode != 0 && mode != 6) { // move camera down
         camVelY -= 0.001f * camPosZ;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_D) && mode != 0) { // move camera right
+    if(glfwGetKey(window_window, GLFW_KEY_D) && mode != 0 && mode != 6) { // move camera right
         camVelX += 0.001f * camPosZ;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_E) && mode != 0) { // zoom camera in
+    if(glfwGetKey(window_window, GLFW_KEY_E) && mode != 0 && mode != 6) { // zoom camera in
         camVelZ -= 0.002 * camPosZ;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_Q) && mode != 0) { // zoom camera out
+    if(glfwGetKey(window_window, GLFW_KEY_Q) && mode != 0 && mode != 6) { // zoom camera out
         camVelZ += 0.002 * camPosZ;
     }
 
@@ -93,13 +93,7 @@ void update() {
 
         address = (tx + scenario->borderTex->width * ty) * scenario->borderTex->channels;
 
-        bool valid = false;
-
-        if(scenario->borderTex->data[address] == (char)playerNation) valid = true;
-        if(nations[playerNation].wars[(unsigned char)scenario->borderTex->data[address]]) valid = true;
-        if(nations[(unsigned char)scenario->borderTex->data[address]].wars[playerNation]) valid = true;
-
-        if(valid) {
+        if(scenario->borderTex->data[address] == (char)playerNation) {
             int tx2 = 0;
             int ty2 = 0;
 
@@ -158,7 +152,7 @@ void update() {
                 renderer_saveTexture("resources/scenario/borders.png", scenario->borderTex);
                 renderer_saveTexture("resources/scenario/colors.png", scenario->colorTex);
 
-                mode = 0;
+                mode = 6;
                 selected = 0;
                 selectedNation = 0;
                 playerNation = 0;
@@ -208,12 +202,9 @@ void update() {
                 mode = 3;
             }
             if(tx > 805 && tx < 1257 && ty > 448 && ty < 553) {
-                mode = 1;
+                mode = 6;
             }
             if(tx > 805 && tx < 1257 && ty > 567 && ty < 667) {
-                mode = 2;
-            }
-            if(tx > 805 && tx < 1257 && ty > 679 && ty < 769) {
                 window_open = false;
             }
 
@@ -353,7 +344,7 @@ void update() {
                 renderer_saveTexture("resources/scenario/borders.png", scenario->borderTex);
                 renderer_saveTexture("resources/scenario/colors.png", scenario->colorTex);
 
-                mode = 0;
+                mode = 6;
                 selected = 0;
                 selectedNation = 0;
                 playerNation = 0;
@@ -424,7 +415,27 @@ void update() {
                     }
                 }
             }
+
+        } else if(mode == 6 && !lastLeftMouseButton) {
+            int tx = (int)floor(x / window_width * editorSelectTex->width);
+            int ty = (int)floor(y / window_height * editorSelectTex->height);
+
+            if(tx > 772 && tx < 1304 && ty > 245 && ty < 361) {
+                mode = 1;
+
+            } else if(tx > 772 && tx < 1304 && ty > 395 && ty < 511) {
+                mode = 2;
+
+            } else if(tx > 772 && tx < 1304 && ty > 545 && ty < 661) {
+                mode = 5;
+
+            } else if(tx > 772 && tx < 1304 && ty > 695 && ty < 811) {
+                mode = 0;
+            }
+
+            lastLeftMouseButton = true;
         }
+
     } else {
         lastLeftMouseButton = false;
     }

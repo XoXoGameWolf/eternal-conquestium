@@ -67,9 +67,8 @@ void render() {
         renderer_renderMesh(quad, uiShader);
 
         renderText(805.0 / 1600.0 * 2 - 1, 2 - 333.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Play Game", 0, 0, 0);
-        renderText(805.0 / 1600.0 * 2 - 1, 2 - 442.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Terrain Editor", 0, 0, 0);
-        renderText(805.0 / 1600.0 * 2 - 1, 2 - 543.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Border Editor", 0, 0, 0);
-        renderText(805.0 / 1600.0 * 2 - 1, 2 - 639.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Exit Game", 0, 0, 0);
+        renderText(805.0 / 1600.0 * 2 - 1, 2 - 442.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, " Editor ", 0, 0, 0);
+        renderText(805.0 / 1600.0 * 2 - 1, 2 - 543.0 / 900.0 * 2 - 1, 353.0 / 1600.0 * 0.8, "Exit Game", 0, 0, 0);
 
     } else if(mode == 1 || mode == 2 || mode == 5) {
         renderer_setUniformTexture(uiShader, "tex", editorTex, 4);
@@ -102,5 +101,14 @@ void render() {
         } else {
             renderText(151.0 / 1600.0 * 2 - 1, 2 - 326.0 / 900.0 * 2 - 1, 253 / 1600.0 * 0.8, "Declare War", 0, 0, 0);
         }
+
+    } else if(mode == 6) {
+        renderer_setUniformTexture(uiShader, "tex", editorSelectTex, 4);
+        renderer_renderMesh(quad, uiShader);
+
+        renderText(1060.0 / 2048.0 * 2 - 1, 2 - 300.0 / 1024.0 * 2 - 1, 516.0 / 2048.0, "Terrain Editor", 0, 0, 0);
+        renderText(1060.0 / 2048.0 * 2 - 1, 2 - 450.0 / 1024.0 * 2 - 1, 516.0 / 2048.0, "Border Editor", 0, 0, 0);
+        renderText(1060.0 / 2048.0 * 2 - 1, 2 - 600.0 / 1024.0 * 2 - 1, 516.0 / 2048.0, "Center Editor", 0, 0, 0);
+        renderText(1060.0 / 2048.0 * 2 - 1, 2 - 750.0 / 1024.0 * 2 - 1, 516.0 / 2048.0, "Back to Menu", 0, 0, 0);
     }
 }

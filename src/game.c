@@ -32,6 +32,7 @@ Texture* editorTex;
 Texture* nationSelectTex;
 Texture* gameplayTex;
 Texture* diplomacyTex;
+Texture* editorSelectTex;
 
 Texture* fontTex;
 

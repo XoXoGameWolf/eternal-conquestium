@@ -14,6 +14,7 @@ void start() {
     nationSelectTex = renderer_createTexture("resources/ui/nation_select.png", false);
     gameplayTex = renderer_createTexture("resources/ui/gameplay.png", false);
     diplomacyTex = renderer_createTexture("resources/ui/diplomacy.png", false);
+    editorSelectTex = renderer_createTexture("resources/ui/editor_select.png", false);
 
     fontTex = renderer_createTexture("resources/font/font.png", false);
 
