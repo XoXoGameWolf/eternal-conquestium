@@ -105,7 +105,7 @@ Texture* renderer_createTexture(char* path, bool aliased) {
 }
 
 void renderer_saveTexture(char* path, Texture* texture) {
-    stbi_write_png(path, texture->width, texture->height, texture->channels, texture->data, 0);
+    stbi_write_bmp(path, texture->width, texture->height, texture->channels, texture->data);
 }
 
 void renderer_updateTexture(Texture* texture, bool aliased) {

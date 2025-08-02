@@ -9,20 +9,20 @@ void start() {
     map = malloc(sizeof(Map));
     scenario = malloc(sizeof(Scenario));
 
-    mainMenuTex = renderer_createTexture("resources/ui/main_menu.png", false);
-    editorTex = renderer_createTexture("resources/ui/editor.png", false);
-    nationSelectTex = renderer_createTexture("resources/ui/nation_select.png", false);
-    gameplayTex = renderer_createTexture("resources/ui/gameplay.png", false);
-    diplomacyTex = renderer_createTexture("resources/ui/diplomacy.png", false);
-    editorSelectTex = renderer_createTexture("resources/ui/editor_select.png", false);
+    mainMenuTex = renderer_createTexture("resources/ui/main_menu.bmp", false);
+    editorTex = renderer_createTexture("resources/ui/editor.bmp", false);
+    nationSelectTex = renderer_createTexture("resources/ui/nation_select.bmp", false);
+    gameplayTex = renderer_createTexture("resources/ui/gameplay.bmp", false);
+    diplomacyTex = renderer_createTexture("resources/ui/diplomacy.bmp", false);
+    editorSelectTex = renderer_createTexture("resources/ui/editor_select.bmp", false);
 
-    fontTex = renderer_createTexture("resources/font/font.png", false);
+    fontTex = renderer_createTexture("resources/font/font.bmp", false);
 
-    map->provinceTex = renderer_createTexture("resources/map/provinces.png", true);
-    map->terrainTex = renderer_createTexture("resources/map/terrain.png", true);
-    map->centerTex = renderer_createTexture("resources/map/centers.png", true);
-    scenario->borderTex = renderer_createTexture("resources/scenario/borders.png", true);
-    scenario->colorTex = renderer_createTexture("resources/scenario/colors.png", true);
+    map->provinceTex = renderer_createTexture("resources/map/provinces.bmp", true);
+    map->terrainTex = renderer_createTexture("resources/map/terrain.bmp", true);
+    map->centerTex = renderer_createTexture("resources/map/centers.bmp", true);
+    scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp", true);
+    scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp", true);
     quad = renderer_createMeshFast(
         QUAD_VERTICES, sizeof(QUAD_VERTICES),
         QUAD_COORDS, sizeof(QUAD_COORDS),

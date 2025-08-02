@@ -65,24 +65,12 @@ void renderer_init(float red, float green, float blue) {
 
 Texture* renderer_createTexture(char* path, bool aliased) {
     Texture* texture = malloc(sizeof(Texture));
-    char* data = calloc(1, 4194304);
-    int bytesRead = readFile(data, path, 4194304);
+    char* data = calloc(1, 73400320);
+    readFile(data, path, 73400320);
 
-    if (bytesRead <= 0) {
-        free(data);
-        free(texture);
-        return NULL;
-    }
-
-    texture->data = (char*)stbi_load_from_memory((unsigned char*)data, bytesRead,
+    texture->data = (char*)stbi_load_from_memory((unsigned char*)data, 73400320,
                                                  &texture->width, &texture->height,
                                                  &texture->channels, 0);
-
-    if (!texture->data) {
-        free(data);
-        free(texture);
-        return NULL;
-    }
 
     glGenTextures(1, &texture->texture);
     glBindTexture(GL_TEXTURE_2D, texture->texture);
@@ -205,20 +193,10 @@ Shader* renderer_createShader(char* vertexPath, char* fragmentPath) {
     Shader* shader = malloc(sizeof(Shader));
 
     char* vertexShaderSourceDynamic = calloc(1, 65536 + 1);
-    int vertexSize = readFile(vertexShaderSourceDynamic, vertexPath, 65536);
-    if (vertexSize <= 0) {
-        __android_log_print(ANDROID_LOG_ERROR, "Coco Engine", "Failed to read vertex shader");
-        exit(-1);
-    }
-    vertexShaderSourceDynamic[vertexSize] = '\0';
+    readFile(vertexShaderSourceDynamic, vertexPath, 65536);
 
     char* fragmentShaderSourceDynamic = calloc(1, 65536 + 1);
-    int fragmentSize = readFile(fragmentShaderSourceDynamic, fragmentPath, 65536);
-    if (fragmentSize <= 0) {
-        __android_log_print(ANDROID_LOG_ERROR, "Coco Engine", "Failed to read fragment shader");
-        exit(-1);
-    }
-    fragmentShaderSourceDynamic[fragmentSize] = '\0';
+    readFile(fragmentShaderSourceDynamic, fragmentPath, 65536);
 
     const char* vertexShaderSource = vertexShaderSourceDynamic;
     const char* fragmentShaderSource = fragmentShaderSourceDynamic;

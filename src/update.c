@@ -1,6 +1,6 @@
 #pragma once
 
-void update() {
+void handleMotion() {
     aspect = (float)window_width / (float)window_height;
 
     if(glfwGetKey(window_window, GLFW_KEY_W) && mode != 0 && mode != 6) { // move camera up
@@ -61,6 +61,10 @@ void update() {
     if(camPosX < -2.75f) {
         camPosX = 2.75f + (camPosX + 2.75f);
     }
+}
+
+void update() {
+    handleMotion();
 
     if(mode == 4 && glfwGetKey(window_window, GLFW_KEY_R) && !lastR) {
         double x;
@@ -147,10 +151,10 @@ void update() {
             int ty = (int)floor(y / window_height * editorTex->height);
 
             if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
-                renderer_saveTexture("resources/map/terrain.png", map->terrainTex);
-                renderer_saveTexture("resources/map/centers.png", map->centerTex);
-                renderer_saveTexture("resources/scenario/borders.png", scenario->borderTex);
-                renderer_saveTexture("resources/scenario/colors.png", scenario->colorTex);
+                renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
+                renderer_saveTexture("resources/map/centers.bmp", map->centerTex);
+                renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
+                renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
 
                 mode = 6;
                 selected = 0;
@@ -227,8 +231,8 @@ void update() {
                     }
                 }
 
-                scenario->borderTex = renderer_createTexture("resources/scenario/borders.png", true);
-                scenario->colorTex = renderer_createTexture("resources/scenario/colors.png", true);
+                scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp", true);
+                scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp", true);
 
                 for(int x = 0; x < scenario->borderTex->width; x++) {
                     for(int y = 0; y < scenario->borderTex->height; y++) {
@@ -339,10 +343,10 @@ void update() {
             int ty = (int)floor(y / window_height * editorTex->height);
 
             if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
-                renderer_saveTexture("resources/map/terrain.png", map->terrainTex);
-                renderer_saveTexture("resources/map/centers.png", map->centerTex);
-                renderer_saveTexture("resources/scenario/borders.png", scenario->borderTex);
-                renderer_saveTexture("resources/scenario/colors.png", scenario->colorTex);
+                renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
+                renderer_saveTexture("resources/map/centers.bmp", map->centerTex);
+                renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
+                renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
 
                 mode = 6;
                 selected = 0;

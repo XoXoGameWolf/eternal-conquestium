@@ -1,6 +1,6 @@
 #pragma once
 
-int readFile(char* buf, char* path, int maxSize) {
+void readFile(char* buf, char* path, int maxSize) {
     jclass r = (*env)->FindClass(env, "org/coco/R$raw");
 
     char nameDynamic[64];
@@ -32,11 +32,7 @@ int readFile(char* buf, char* path, int maxSize) {
     mid = (*env)->GetMethodID(env, (*env)->GetObjectClass(env, stream), "read", "([B)I");
     jint bytesRead = (*env)->CallIntMethod(env, stream, mid, jdata);
 
-    if (bytesRead <= 0) return 0;
-
     jbyte* data = (*env)->GetByteArrayElements(env, jdata, NULL);
     memcpy(buf, data, bytesRead);
     (*env)->ReleaseByteArrayElements(env, jdata, data, JNI_ABORT);
-
-    return bytesRead;
 }
