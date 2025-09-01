@@ -1,7 +1,7 @@
 NAME := eternal-conquestium
 ANDROID := /home/wolf/Android/Sdk/platforms/android-36/android.jar
 
-all: linux windows android
+all: linux windows
 
 linux: build/$(NAME)-linux.zip
 windows: build/$(NAME)-windows.zip

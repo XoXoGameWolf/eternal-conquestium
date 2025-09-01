@@ -2,35 +2,29 @@
 
 void start() {
     srand(time(NULL));
-    renderer_init(0.0f, 0.0f, 0.0f);
 
-    window_fullscreen = true;
+    fullscreen = true;
 
     map = malloc(sizeof(Map));
     scenario = malloc(sizeof(Scenario));
 
-    mainMenuTex = renderer_createTexture("resources/ui/main_menu.bmp", false);
-    editorTex = renderer_createTexture("resources/ui/editor.bmp", false);
-    nationSelectTex = renderer_createTexture("resources/ui/nation_select.bmp", false);
-    gameplayTex = renderer_createTexture("resources/ui/gameplay.bmp", false);
-    diplomacyTex = renderer_createTexture("resources/ui/diplomacy.bmp", false);
-    editorSelectTex = renderer_createTexture("resources/ui/editor_select.bmp", false);
+    mainMenuTex = createTexture("resources/ui/main_menu.bmp", false);
+    editorTex = createTexture("resources/ui/editor.bmp", false);
+    nationSelectTex = createTexture("resources/ui/nation_select.bmp", false);
+    gameplayTex = createTexture("resources/ui/gameplay.bmp", false);
+    diplomacyTex = createTexture("resources/ui/diplomacy.bmp", false);
+    editorSelectTex = createTexture("resources/ui/editor_select.bmp", false);
 
-    fontTex = renderer_createTexture("resources/font/font.bmp", false);
+    fontTex = createTexture("resources/font/font.bmp", false);
 
-    map->provinceTex = renderer_createTexture("resources/map/provinces.bmp", true);
-    map->terrainTex = renderer_createTexture("resources/map/terrain.bmp", true);
-    map->centerTex = renderer_createTexture("resources/map/centers.bmp", true);
-    scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp", true);
-    scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp", true);
-    quad = renderer_createMeshFast(
-        QUAD_VERTICES, sizeof(QUAD_VERTICES),
-        QUAD_COORDS, sizeof(QUAD_COORDS),
-        QUAD_INDICES, sizeof(QUAD_INDICES)
-    );
-    mapShader = renderer_createShader("resources/shaders/map/map_vert.glsl", "resources/shaders/map/map_frag.glsl");
-    uiShader = renderer_createShader("resources/shaders/ui/ui_vert.glsl", "resources/shaders/ui/ui_frag.glsl");
-    fontShader = renderer_createShader("resources/shaders/font/font_vert.glsl", "resources/shaders/font/font_frag.glsl");
+    map->provinceTex = createTexture("resources/map/provinces.bmp", true);
+    map->terrainTex = createTexture("resources/map/terrain.bmp", true);
+    map->centerTex = createTexture("resources/map/centers.bmp", true);
+    scenario->borderTex = createTexture("resources/scenario/borders.bmp", true);
+    scenario->colorTex = createTexture("resources/scenario/colors.bmp", true);
+    mapShader = createShader("resources/shaders/map/map_vert.glsl", "resources/shaders/map/map_frag.glsl");
+    uiShader = createShader("resources/shaders/ui/ui_vert.glsl", "resources/shaders/ui/ui_frag.glsl");
+    fontShader = createShader("resources/shaders/font/font_vert.glsl", "resources/shaders/font/font_frag.glsl");
 
     for(int i = 0; i < 256; i++) {
         nations[i].provinceCount = 0;
@@ -53,12 +47,9 @@ void start() {
         armies[i].size = 0;
     }
 
-    camPosX = 0.0f;
-    camPosY = 0.0f;
-    camPosZ = 1.0f;
-    camVelX = 0.0f;
-    camVelY = 0.0f;
-    camVelZ = 0.0f;
+    cam_vel_x = 0.0f;
+    cam_vel_y = 0.0f;
+    cam_vel_z = 0.0f;
 
     mode = 0;
     aspect = 0;

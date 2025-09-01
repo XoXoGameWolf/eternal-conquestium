@@ -1,5 +1,6 @@
 #pragma once
 
+/*
 void renderText(float x, float y, float scale, char* text, float r, float g, float b) {
     int length = strlen(text);
     renderer_setUniformTexture(fontShader, "tex", fontTex, 5);
@@ -112,3 +113,4 @@ void render() {
         renderText(1060.0 / 2048.0 * 2 - 1, 2 - 750.0 / 1024.0 * 2 - 1, 516.0 / 2048.0, "Back to Menu", 0, 0, 0);
     }
 }
+*/

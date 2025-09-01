@@ -1,84 +1,79 @@
 #pragma once
 
 void handleMotion() {
-    aspect = (float)window_width / (float)window_height;
+    aspect = (float)width / (float)height;
 
-    if(glfwGetKey(window_window, GLFW_KEY_W) && mode != 0 && mode != 6) { // move camera up
-        camVelY += 0.001f * camPosZ;
+    if(getKey(KEY_W) && mode != 0 && mode != 6) { // move camera up
+        cam_vel_y += 0.001f * cam_pos_z;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_A) && mode != 0 && mode != 6) { // move camera left
-        camVelX -= 0.001f * camPosZ;
+    if(getKey(KEY_A) && mode != 0 && mode != 6) { // move camera left
+        cam_vel_x -= 0.001f * cam_pos_z;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_S) && mode != 0 && mode != 6) { // move camera down
-        camVelY -= 0.001f * camPosZ;
+    if(getKey(KEY_S) && mode != 0 && mode != 6) { // move camera down
+        cam_vel_y -= 0.001f * cam_pos_z;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_D) && mode != 0 && mode != 6) { // move camera right
-        camVelX += 0.001f * camPosZ;
+    if(getKey(KEY_D) && mode != 0 && mode != 6) { // move camera right
+        cam_vel_x += 0.001f * cam_pos_z;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_E) && mode != 0 && mode != 6) { // zoom camera in
-        camVelZ -= 0.002 * camPosZ;
+    if(getKey(KEY_E) && mode != 0 && mode != 6) { // zoom camera in
+        cam_vel_z -= 0.002 * cam_pos_z;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_Q) && mode != 0 && mode != 6) { // zoom camera out
-        camVelZ += 0.002 * camPosZ;
+    if(getKey(KEY_Q) && mode != 0 && mode != 6) { // zoom camera out
+        cam_vel_z += 0.002 * cam_pos_z;
     }
 
     // velocity
-    camPosX += camVelX;
-    camPosY += camVelY;
-    camPosZ += camVelZ;
+    cam_pos_x += cam_vel_x;
+    cam_pos_y += cam_vel_y;
+    cam_pos_z += cam_vel_z;
 
     // friction
-    camVelX *= 0.9f;
-    camVelY *= 0.9f;
-    camVelZ *= 0.9f;
+    cam_vel_x *= 0.9f;
+    cam_vel_y *= 0.9f;
+    cam_vel_z *= 0.9f;
 
     // maximum zoom (whole map)
-    if(camPosZ > 0.5 * aspect) {
-        camPosZ = 0.5 * aspect;
+    if(cam_pos_z > 0.5 * aspect) {
+        cam_pos_z = 0.5 * aspect;
     }
 
     // lock y below top of map
-    if(camPosY > 0.5 * ((0.5 * aspect) - camPosZ) / (0.5 * aspect)) {
-        camPosY = 0.5 * ((0.5 * aspect) - camPosZ) / (0.5 * aspect);
+    if(cam_pos_y > 0.5 * ((0.5 * aspect) - cam_pos_z) / (0.5 * aspect)) {
+        cam_pos_y = 0.5 * ((0.5 * aspect) - cam_pos_z) / (0.5 * aspect);
     }
 
     // lock y above bottom of map
-    if(camPosY < -0.5 * ((0.5 * aspect) - camPosZ) / (0.5 * aspect)) {
-        camPosY = -0.5 * ((0.5 * aspect) - camPosZ) / (0.5 * aspect);
+    if(cam_pos_y < -0.5 * ((0.5 * aspect) - cam_pos_z) / (0.5 * aspect)) {
+        cam_pos_y = -0.5 * ((0.5 * aspect) - cam_pos_z) / (0.5 * aspect);
     }
 
     // loop x when rightmost
-    if(camPosX > 2.75f) {
-        camPosX = -2.75f + (camPosX - 2.75f);
+    if(cam_pos_x > 2.75f) {
+        cam_pos_x = -2.75f + (cam_pos_x - 2.75f);
     }
 
     // loop x when leftmost
-    if(camPosX < -2.75f) {
-        camPosX = 2.75f + (camPosX + 2.75f);
+    if(cam_pos_x < -2.75f) {
+        cam_pos_x = 2.75f + (cam_pos_x + 2.75f);
     }
 }
 
 void update() {
     handleMotion();
 
-    if(mode == 4 && glfwGetKey(window_window, GLFW_KEY_R) && !lastR) {
-        double x;
-        double y;
+    if(mode == 4 && getKey(KEY_R) && !lastR) {
+        float x = getMouseX();
+        float y = getMouseY();
 
-        glfwGetCursorPos(window_window, &x, &y);
-
-        x = x / window_width * 2 - 1;
-        y = 2 - y / window_height * 2 - 1;
-
-        x = (x * camPosZ + camPosX) / 2.75f;
+        x = (x * cam_pos_z + cam_pos_x) / 2.75f;
         if(x > 1) x -= 2;
         if(x < -1) x += 2;
-        y = y / aspect * camPosZ + camPosY;
+        y = y / aspect * cam_pos_z + cam_pos_y;
 
         x = x + 0.5;
         y = -y + 0.5;
@@ -88,12 +83,10 @@ void update() {
 
         int address = (tx + map->provinceTex->width * ty) * map->provinceTex->channels;
 
-        unsigned char r = map->provinceTex->data[address];
-        unsigned char g = map->provinceTex->data[address + 1];
-        unsigned char b = map->provinceTex->data[address + 2];
+        Color col = getPixel(map->provinceTex, tx, ty);
 
-        tx = b + 256 * (g % 16);
-        ty = g / 16 + 16 * r;
+        tx = col.b + 256 * (col.g % 16);
+        ty = col.g / 16 + 16 * col.r;
 
         address = (tx + scenario->borderTex->width * ty) * scenario->borderTex->channels;
 
@@ -105,13 +98,10 @@ void update() {
                 for(ty = 0; ty < map->centerTex->height; ty++) {
                     address = (tx + map->centerTex->width * ty) * map->centerTex->channels;
 
-                    if(map->centerTex->data[address] == 0) continue;
-
-                    if(map->provinceTex->data[address] != (char)r || 
-                            map->provinceTex->data[address + 1] != (char)g || 
-                            map->provinceTex->data[address + 2] != (char)b) {
-                        continue;
-                    }
+                    if(getPixel(map->centerTex, tx, ty).r == 0) continue;
+                    if(getPixel(map->provinceTex, tx, ty).r != col.r || 
+                        getPixel(map->provinceTex, tx, ty).g != col.g || 
+                        getPixel(map->provinceTex, tx, ty).b != col.b) continue;
 
                     tx2 = tx;
                     ty2 = ty;
@@ -138,23 +128,21 @@ void update() {
             }
         }
     }
-    lastR = glfwGetKey(window_window, GLFW_KEY_R);
+    lastR = getKey(KEY_R);
 
-    if(glfwGetMouseButton(window_window, GLFW_MOUSE_BUTTON_LEFT)) { // set province
-        double x;
-        double y;
-
-        glfwGetCursorPos(window_window, &x, &y);
+    if(getButton(BUTTON_LEFT)) { // set province
+        float x = getMouseX();
+        float y = getMouseY();
 
         if(mode == 5 && !lastLeftMouseButton) { // center editor
-            int tx = (int)floor(x / window_width * editorTex->width);
-            int ty = (int)floor(y / window_height * editorTex->height);
+            int tx = (int)floor(((x + 1.0f) / 2.0f * width) / width * editorTex->width);
+            int ty = (int)floor(((-y + 1.0f) / 2.0f * height) / height * editorTex->height);
 
             if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
-                renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
-                renderer_saveTexture("resources/map/centers.bmp", map->centerTex);
-                renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
-                renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
+                saveTexture("resources/map/terrain.bmp", map->terrainTex);
+                saveTexture("resources/map/centers.bmp", map->centerTex);
+                saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
+                saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
 
                 mode = 6;
                 selected = 0;
@@ -172,35 +160,28 @@ void update() {
                 for(int x = 0; x < scenario->borderTex->width; x++) {
                     for(int y = 0; y < scenario->borderTex->height; y++) {
                         int address = (x + scenario->borderTex->width * y) * scenario->borderTex->channels;
-                        nations[(unsigned char)scenario->borderTex->data[address]].provinceCount++;
+                        nations[getPixel(scenario->borderTex, x, y).r].provinceCount++;
                     }
                 }
 
             } else {
-                x = x / (float)window_width * 2 - 1;
-                y = 2 - y / (float)window_height * 2 - 1;
-            
-                x = (x * camPosZ + camPosX) / 2.75f;
+                x = (x * cam_pos_z + cam_pos_x) / 2.75f;
                 if(x < -1) x += 2;
                 if(x > 1) x -= 2;
-                y = y / aspect * camPosZ + camPosY;
+                y = y / aspect * cam_pos_z + cam_pos_y;
 
                 tx = (int)floor((x + 0.5) * (float)map->centerTex->width);
                 ty = (int)floor((-y + 0.5) * (float)map->centerTex->height);
 
-                int address = (tx + map->centerTex->width * ty) * map->centerTex->channels;
-
-                map->centerTex->data[address] = (char)255;
-                map->centerTex->data[address + 1] = (char)255;
-                map->centerTex->data[address + 2] = (char)255;
-                renderer_updateTexture(map->centerTex, true);
+                setPixel(map->centerTex, tx, ty, (Color){255, 255, 255});
+                updateTexture(map->centerTex, true);
             }
 
             lastLeftMouseButton = true;
 
         } else if(mode == 0 && !lastLeftMouseButton) { // main menu
-            int tx = (int)floor(x / window_width * mainMenuTex->width);
-            int ty = (int)floor(y / window_height * mainMenuTex->height);
+            int tx = (int)floor(x / width * mainMenuTex->width);
+            int ty = (int)floor(y / height * mainMenuTex->height);
 
             if(tx > 805 && tx < 1257 && ty > 325 && ty < 430) {
                 mode = 3;
@@ -209,14 +190,14 @@ void update() {
                 mode = 6;
             }
             if(tx > 805 && tx < 1257 && ty > 567 && ty < 667) {
-                window_open = false;
+                open = false;
             }
 
             lastLeftMouseButton = true;
         
         } else if(mode == 4 && !lastLeftMouseButton) { // gameplay
-            int tx = (int)floor(x / window_width * gameplayTex->width);
-            int ty = (int)floor(y / window_height * gameplayTex->height);
+            int tx = (int)floor(x / width * gameplayTex->width);
+            int ty = (int)floor(y / height * gameplayTex->height);
 
             if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
                 mode = 0;
@@ -231,13 +212,12 @@ void update() {
                     }
                 }
 
-                scenario->borderTex = renderer_createTexture("resources/scenario/borders.bmp", true);
-                scenario->colorTex = renderer_createTexture("resources/scenario/colors.bmp", true);
+                scenario->borderTex = createTexture("resources/scenario/borders.bmp", true);
+                scenario->colorTex = createTexture("resources/scenario/colors.bmp", true);
 
                 for(int x = 0; x < scenario->borderTex->width; x++) {
                     for(int y = 0; y < scenario->borderTex->height; y++) {
-                        int address = (x + scenario->borderTex->width * y) * scenario->borderTex->channels;
-                        nations[(unsigned char)scenario->borderTex->data[address]].provinceCount++;
+                        nations[getPixel(scenario->borderTex, x, y).r].provinceCount++;
                     }
                 }
 
@@ -265,37 +245,28 @@ void update() {
 
 
             } else {
-                x = x / window_width * 2 - 1;
-                y = 2 - y / window_height * 2 - 1;
-
-                x = (x * camPosZ + camPosX) / 2.75;
+                x = (x * cam_pos_z + cam_pos_x) / 2.75;
                 if(x > 0.5) x -= 1;
                 if(x < -0.5) x += 1;
-                y = y / aspect * camPosZ + camPosY;
+                y = y / aspect * cam_pos_z + cam_pos_y;
 
                 tx = (int)floor((x + 0.5) * map->provinceTex->width);
                 ty = (int)floor((-y + 0.5) * map->provinceTex->height);
 
-                int address = (tx + map->provinceTex->width * ty) * map->provinceTex->channels;
+                Color col = getPixel(map->provinceTex, tx, ty);
 
-                unsigned char r = map->provinceTex->data[address];
-                unsigned char g = map->provinceTex->data[address + 1];
-                unsigned char b = map->provinceTex->data[address + 2];
+                tx = col.b + 256 * (col.g % 16);
+                ty = col.g / 16 + 16 * col.r;
 
-                tx = b + 256 * (g % 16);
-                ty = g / 16 + 16 * r;
-
-                address = (tx + scenario->borderTex->width * ty) * scenario->borderTex->channels;
-
-                selectedNation = scenario->borderTex->data[address];
+                selectedNation = getPixel(scenario->borderTex, tx, ty).r;
                 if(selectedNation == playerNation) selectedNation = 0;
             }
 
             lastLeftMouseButton = true;
 
         } else if(mode == 3 && !lastLeftMouseButton) { // nation selection
-            int tx = (int)floor(x / window_width * nationSelectTex->width);
-            int ty = (int)floor(y / window_height * nationSelectTex->height);
+            int tx = (int)floor(x / width * nationSelectTex->width);
+            int ty = (int)floor(y / height * nationSelectTex->height);
 
             if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
                 mode = 0;
@@ -309,44 +280,35 @@ void update() {
                 }
 
             } else {
-                x = x / window_width * 2 - 1;
-                y = 2 - y / window_height * 2 - 1;
-
-                x = (x * camPosZ + camPosX) / 2.75;
+                x = (x * cam_pos_z + cam_pos_x) / 2.75;
                 if(x > 0.5) x -= 1;
                 if(x < -0.5) x += 1;
-                y = y / aspect * camPosZ + camPosY;
+                y = y / aspect * cam_pos_z + cam_pos_y;
                 
                 tx = (int)floor((x + 0.5) * map->provinceTex->width);
                 ty = (int)floor((-y + 0.5) * map->provinceTex->height);
 
-                int address = (tx + ty * map->provinceTex->width) * map->provinceTex->channels;
+                Color col = getPixel(map->provinceTex, tx, ty);
 
-                unsigned char r = map->provinceTex->data[address];
-                unsigned char g = map->provinceTex->data[address + 1];
-                unsigned char b = map->provinceTex->data[address + 2];
+                tx = col.b + 256 * (col.g % 16);
+                ty = col.g / 16 + 16 * col.r;
 
-                tx = b + 256 * (g % 16);
-                ty = g / 16 + 16 * r;
-
-                address = (tx + ty * scenario->borderTex->width) * scenario->borderTex->channels;
-
-                if(scenario->borderTex->data[address] != 0) {
-                    selectedNation = scenario->borderTex->data[address];
+                if(getPixel(scenario->borderTex, tx, ty).r != 0) {
+                    selectedNation = getPixel(scenario->borderTex, tx, ty).r;
                 }
             }
 
             lastLeftMouseButton = true;
 
         } else if((mode == 1 || mode == 2) && !lastLeftMouseButton) { // terrain or border editor
-            int tx = (int)floor(x / window_width * editorTex->width);
-            int ty = (int)floor(y / window_height * editorTex->height);
+            int tx = (int)floor(x / width * editorTex->width);
+            int ty = (int)floor(y / height * editorTex->height);
 
             if(tx > 0 && tx < 291 && ty > 0 && ty < 90) {
-                renderer_saveTexture("resources/map/terrain.bmp", map->terrainTex);
-                renderer_saveTexture("resources/map/centers.bmp", map->centerTex);
-                renderer_saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
-                renderer_saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
+                saveTexture("resources/map/terrain.bmp", map->terrainTex);
+                saveTexture("resources/map/centers.bmp", map->centerTex);
+                saveTexture("resources/scenario/borders.bmp", scenario->borderTex);
+                saveTexture("resources/scenario/colors.bmp", scenario->colorTex);
 
                 mode = 6;
                 selected = 0;
@@ -369,13 +331,10 @@ void update() {
                 }
 
             } else {
-                x = x / window_width * 2 - 1;
-                y = 2 - y / window_height * 2 - 1;
-
-                x = (x * camPosZ + camPosX) / 2.75;
+                x = (x * cam_pos_z + cam_pos_x) / 2.75;
                 if(x > 0.5) x -= 1;
                 if(x < -0.5) x += 1;
-                y = y / aspect * camPosZ + camPosY;
+                y = y / aspect * cam_pos_z + cam_pos_y;
 
                 if(x > -0.5f && x < 0.5f && y > -0.5f && y < 0.5f) {
                     tx = (int)floor((x + 0.5) * map->provinceTex->width);
@@ -397,13 +356,13 @@ void update() {
                             map->terrainTex->data[address] = selected;
                             map->terrainTex->data[address + 1] = 0;
                             map->terrainTex->data[address + 2] = 0;
-                            renderer_updateTexture(map->terrainTex, true);
+                            updateTexture(map->terrainTex, true);
 
                             if(selected == 2) {
                                 scenario->borderTex->data[address] = 0;
                                 scenario->borderTex->data[address + 1] = 0;
                                 scenario->borderTex->data[address + 2] = 0;
-                                renderer_updateTexture(scenario->borderTex, true);
+                                updateTexture(scenario->borderTex, true);
                             }
                         }
                         // border editor
@@ -414,15 +373,15 @@ void update() {
                             scenario->borderTex->data[address] = selected;
                             scenario->borderTex->data[address + 1] = 0;
                             scenario->borderTex->data[address + 2] = 0;
-                            renderer_updateTexture(scenario->borderTex, true);
+                            updateTexture(scenario->borderTex, true);
                         }
                     }
                 }
             }
 
         } else if(mode == 6 && !lastLeftMouseButton) {
-            int tx = (int)floor(x / window_width * editorSelectTex->width);
-            int ty = (int)floor(y / window_height * editorSelectTex->height);
+            int tx = (int)floor(x / width * editorSelectTex->width);
+            int ty = (int)floor(y / height * editorSelectTex->height);
 
             if(tx > 772 && tx < 1304 && ty > 245 && ty < 361) {
                 mode = 1;
@@ -444,20 +403,15 @@ void update() {
         lastLeftMouseButton = false;
     }
 
-    if(glfwGetMouseButton(window_window, GLFW_MOUSE_BUTTON_RIGHT)) { // right click
+    if(getButton(BUTTON_RIGHT)) { // right click
         if(!lastRightMouseButton) {
-            double x;
-            double y;
+            float x = getMouseX();
+            float y = getMouseY();
 
-            glfwGetCursorPos(window_window, &x, &y);
-
-            x = x / window_width * 2 - 1;
-            y = 2 - y / window_height * 2 - 1;
-
-            x = (x * camPosZ + camPosX) / 2.75;
+            x = (x * cam_pos_z + cam_pos_x) / 2.75;
             if(x > 0.5) x -= 1;
             if(x < -0.5) x += 1;
-            y = y / aspect * camPosZ + camPosY;
+            y = y / aspect * cam_pos_z + cam_pos_y;
 
             if(x > -0.5f && x < 0.5f && y > -0.5f && y < 0.5f) {
                 int tx = (int)floor((x + 0.5) * map->provinceTex->width);
@@ -560,11 +514,11 @@ void update() {
                                         scenario->colorTex->data[address + 1] = 0;
                                         scenario->colorTex->data[address + 2] = 0;
 
-                                        renderer_updateTexture(scenario->colorTex, true);
+                                        updateTexture(scenario->colorTex, true);
                                     }
 
                                     scenario->borderTex->data[address2] = (char)playerNation;
-                                    renderer_updateTexture(scenario->borderTex, true);
+                                    updateTexture(scenario->borderTex, true);
                                     break;
 
                                 } else if(armies[i].x == tx && armies[i].y == ty && armies[i].size > armies[selectedArmy].size) {
@@ -601,11 +555,11 @@ void update() {
                                     scenario->colorTex->data[address + 1] = 0;
                                     scenario->colorTex->data[address + 2] = 0;
 
-                                    renderer_updateTexture(scenario->colorTex, true);
+                                    updateTexture(scenario->colorTex, true);
                                 }
 
                                 scenario->borderTex->data[address2] = (char)playerNation;
-                                renderer_updateTexture(scenario->borderTex, true);
+                                updateTexture(scenario->borderTex, true);
                             }
                         }
                     }
@@ -613,18 +567,13 @@ void update() {
                     lastRightMouseButton = true;
 
                 } else if(mode == 5) { // center editor
-                    double x;
-                    double y;
-
-                    glfwGetCursorPos(window_window, &x, &y);
-
-                    x = x / (float)window_width * 2 - 1;
-                    y = 2 - y / (float)window_height * 2 - 1;
+                    float x = getMouseX();
+                    float y = getMouseY();
             
-                    x = (x * camPosZ + camPosX) / 2.75f;
+                    x = (x * cam_pos_z + cam_pos_x) / 2.75f;
                     if(x < -1) x += 2;
                     if(x > 1) x -= 2;
-                    y = y / aspect * camPosZ + camPosY;
+                    y = y / aspect * cam_pos_z + cam_pos_y;
 
                     int tx = (int)floor((x + 0.5) * (float)map->centerTex->width);
                     int ty = (int)floor((-y + 0.5) * (float)map->centerTex->height);
@@ -634,7 +583,7 @@ void update() {
                     map->centerTex->data[address] = 0;
                     map->centerTex->data[address + 1] = 0;
                     map->centerTex->data[address + 2] = 0;
-                    renderer_updateTexture(map->centerTex, true);
+                    updateTexture(map->centerTex, true);
                 }
             }
         }
@@ -643,7 +592,7 @@ void update() {
         lastRightMouseButton = false;
     }
 
-    if(glfwGetKey(window_window, GLFW_KEY_N) && !lastN) { // select new nation
+    if(getKey(KEY_N) && !lastN) { // select new nation
         if(mode == 2) {
             selected = 1;
 
@@ -656,8 +605,8 @@ void update() {
             scenario->colorTex->data[selected * scenario->colorTex->channels] = rand() % 256;
             scenario->colorTex->data[selected * scenario->colorTex->channels + 1] = rand() % 256;
             scenario->colorTex->data[selected * scenario->colorTex->channels + 2] = rand() % 256;
-            renderer_updateTexture(scenario->colorTex, true);
+            updateTexture(scenario->colorTex, true);
         }
     }
-    lastN = glfwGetKey(window_window, GLFW_KEY_N);
+    lastN = getKey(KEY_N);
 }

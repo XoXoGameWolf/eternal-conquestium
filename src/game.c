@@ -52,12 +52,9 @@ unsigned char selectedNation;
 unsigned char playerNation;
 int selectedArmy;
 
-float camPosX;
-float camPosY;
-float camPosZ;
-float camVelX;
-float camVelY;
-float camVelZ;
+float cam_vel_x;
+float cam_vel_y;
+float cam_vel_z;
 
 bool lastLeftMouseButton;
 bool lastRightMouseButton;
