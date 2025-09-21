@@ -20,7 +20,35 @@ bool lastFullscreen = false;
 bool fullscreen = false;
 bool open = true;
 
+void framebuffer_size_callback(GLFWwindow* window, int _width, int _height);
+
+#include <coco/renderer.c>
+#include <coco/objects.c>
+#include <coco/input.c>
+#include <coco/audio.c>
+
 void framebuffer_size_callback(GLFWwindow* window, int _width, int _height) {
+    for(int i = 0; i < 256; i++) {
+        if(viewports[i] == 0) continue;
+        glBindFramebuffer(GL_FRAMEBUFFER, viewports[i]->fbo);
+        glViewport(0, 0, _width, _height);
+        
+        deleteTexture(viewports[i]->texture);
+        deleteTexture(viewports[i]->depth);
+        deleteTexture(viewports[i]->texture2);
+
+        viewports[i]->texture = createEmptyTexture(_width, _height, false);
+        viewports[i]->depth = createEmptyDepthTexture(_width, _height, false);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, viewports[i]->texture->texture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, viewports[i]->depth->texture, 0);
+
+        viewports[i]->texture2->width = _width;
+        viewports[i]->texture2->height = _height;
+        viewports[i]->texture2->texture = createEmptyTexture(_width, _height, false)->texture;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, _width, _height);
 }
 
@@ -31,10 +59,6 @@ void error_callback(int id, const char* description) {
     }
     printf("GLFW had an error: \n%s\n", description);
 }
-
-#include <coco/renderer.c>
-#include <coco/objects.c>
-#include <coco/input.c>
 
 Mesh* quad;
 
@@ -73,6 +97,27 @@ int main() {
 
     framebuffer_size_callback(window, (int)((float)1280 * widthScale), (int)((float)720 * heightScale));
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    GLFWimage images[1];
+    images[0].pixels = stbi_load("resources/icon.png", &images[0].width, &images[0].height, 0, 4);
+    glfwSetWindowIcon(window, 1, images);
+    stbi_image_free(images[0].pixels);
+
+    audioDevice = alcOpenDevice(NULL);
+
+    audioContext = alcCreateContext(audioDevice, NULL);
+    alcMakeContextCurrent(audioContext);
+
+    alListener3f(AL_POSITION, cam_pos_x, cam_pos_y, cam_pos_z);
+
+    for(int i = 0; i < 256; i++) {
+        audios[i] = 0;
+        audioSources[i] = 0;
+        buffers[i] = 0;
+        meshes[i] = 0;
+        shaders[i] = 0;
+        textures[i] = 0;
+    }
 
     float vertices[] = {
         -1.0f, -1.0f, 0.0f,
@@ -117,10 +162,59 @@ int main() {
         render();
         bool lastF11 = glfwGetKey(window, GLFW_KEY_F11);
 
+        alListener3f(AL_POSITION, cam_pos_x, cam_pos_y, cam_pos_z);
+
+        for(int i = 0; i < 256; i++) {
+            if(audioSources[i] != 0 && !getAudioSourceState(audioSources[i])) {
+                deleteAudioSource(audioSources[i]);
+            }
+
+            if(audioSources[i] != 0 && audioSources[i]->camera) {
+                setAudioSourcePos(audioSources[i], cam_pos_x, cam_pos_y, cam_pos_z);
+            }
+
+            if(audioSources[i] != 0 && audioSources[i]->object != 0) {
+                setAudioSourcePos(audioSources[i], 
+                    audioSources[i]->object->pos_x, 
+                    audioSources[i]->object->pos_y, 
+                    audioSources[i]->object->pos_z
+                );
+            }
+        }
+
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        glfwGetWindowSize(window, &width, &height);
+        int width2;
+        int height2;
+
+        glfwGetWindowSize(window, &width2, &height2);
+
+        if(width2 != width || height2 != height) {
+            width = width2;
+            height = height2;
+
+            for(int i = 0; i < 256; i++) {
+                if(viewports[i] == 0) continue;
+                glBindFramebuffer(GL_FRAMEBUFFER, viewports[i]->fbo);
+                
+                deleteTexture(viewports[i]->texture);
+                deleteTexture(viewports[i]->depth);
+                deleteTexture(viewports[i]->texture2);
+
+                viewports[i]->texture = createEmptyTexture(width, height, false);
+                viewports[i]->depth = createEmptyDepthTexture(width, height, false);
+
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, viewports[i]->texture->texture, 0);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, viewports[i]->depth->texture, 0);
+
+                viewports[i]->texture2->width = width;
+                viewports[i]->texture2->height = height;
+                viewports[i]->texture2->texture = createEmptyTexture(width, height, false)->texture;
+            }
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
 
         if(glfwGetKey(window, GLFW_KEY_F11) && !lastF11) {
             fullscreen = !fullscreen;
@@ -137,6 +231,30 @@ int main() {
             open = false;
         }
     }
+
+    for(int i = 0; i < 256; i++) {
+        if(audios[i] != 0) {
+            deleteAudio(audios[i]);
+        }
+        if(audioSources[i] != 0) {
+            deleteAudioSource(audioSources[i]);
+        }
+        if(buffers[i] != 0) {
+            deleteBuffer(buffers[i]);
+        }
+        if(meshes[i] != 0) {
+            deleteMesh(meshes[i]);
+        }
+        if(shaders[i] != 0) {
+            deleteShader(shaders[i]);
+        }
+        if(textures[i] != 0) {
+            deleteTexture(textures[i]);
+        }
+    }
+
+    alcDestroyContext(audioContext);
+    alcCloseDevice(audioDevice);
 
     glfwTerminate();
 }
